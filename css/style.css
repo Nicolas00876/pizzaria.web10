@@ -56,12 +56,13 @@
   --azul-noturno: #070B17;
   --verde-destaque: #5CE69B;        /* Verde claro luminoso (mesmo de 'melhores noites' e selo aberto) */
 
-  /* Escala de Espaçamentos do Hero Mobile (8 / 12 / 16 / 20 / 24px) */
+  /* Escala de Espaçamentos do Hero (8 / 12 / 16 / 20 / 24 / 32px) */
   --esp-8: 8px;
   --esp-12: 12px;
   --esp-16: 16px;
   --esp-20: 20px;
   --esp-24: 24px;
+  --esp-32: 32px;
 
   /* Controles Rápidos do Hero Mobile (Tamanho da pizza e intensidade do brilho) */
   --hero-pizza-tamanho: clamp(240px, 72vw, 320px);
@@ -2151,7 +2152,11 @@ header.scrolled,
   overflow: hidden;
 }
 
-/* No celular (< 768px), os elementos visuais pesados ficam desativados */
+/* No celular (< 768px), os elementos visuais pesados e foto desktop ficam desativados */
+.hero-bg-picture {
+  display: none;
+}
+
 .hero-decorations {
   display: none !important;
 }
@@ -2868,181 +2873,355 @@ header.scrolled,
    RESPONSIVIDADE DO HERO (PONTO DE CORTE: BREAKPOINT_DESKTOP = 768px)
    -------------------------------------------------------------------------- */
 @media (min-width: 768px) {
+  /* 1. Estrutura e Container do Hero */
   .hero {
-    padding: 3.5rem 0 5.5rem;
-    min-height: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Altura fluida sem forçar tela cheia em monitores muito altos */
+    min-height: clamp(520px, calc(100vh - var(--altura-header, 68px)), 760px);
+    min-height: clamp(520px, calc(100svh - var(--altura-header, 68px)), 760px);
+    padding: clamp(3rem, 6vh, 5rem) 0;
+    background-color: var(--azul-marinho, #0B1020);
+    overflow: hidden;
+  }
+
+  /* Desativa pseudo-elemento antigo para priorizar a foto e novo degradê */
+  .hero::before {
+    display: none;
+  }
+
+  /* 2. Foto em <picture> de ponta a ponta atrás de tudo, limitada a 1920px centralizada */
+  .hero-bg-picture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
     display: block;
-    background-image: none;
   }
-  .hero-grid {
-    gap: 2.75rem;
+
+  .hero-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform-origin: center center;
+    animation: heroSlowZoom 24s ease-in-out infinite alternate;
+    will-change: transform;
   }
+
+  /* 3. Overlay fotográfico: rgba(11, 16, 32, 0.58) uniforme + vinheta radial + degradê 20% base */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, rgba(11, 16, 32, 0) 80%, rgba(11, 16, 32, 0.6) 100%),
+      radial-gradient(circle at center, rgba(11, 16, 32, 0) 25%, rgba(11, 16, 32, 0.55) 100%),
+      rgba(11, 16, 32, 0.58);
+  }
+
+  /* 4. Grid e Conteúdo Centralizado (largura máxima cerca de 760px) */
+  .hero-grid.desktop-hero-grid {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 0;
+  }
+
   .hero-content {
-    display: block;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
   }
-  .hero-mobile-media {
-    display: none !important;
-  }
-  /* Linha editorial visível no PC e alinhada à esquerda */
+
+  /* Hierarquia e espaçamentos (8 / 12 / 16 / 24 / 32px) */
+
+  /* 1º: Linha "PIZZA ARTESANAL · PALOTINA" com filetes finos de 48px dos dois lados */
   .hero-mobile-kicker {
-    display: block !important;
-    text-align: left;
+    order: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--esp-16, 16px);
     font-family: var(--fonte-texto);
     font-size: 0.78rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     color: var(--verde-destaque, #5CE69B);
-    margin-bottom: 0.85rem;
+    margin-bottom: var(--esp-12, 12px);
+    text-align: center;
+    animation: heroFadeInUp 600ms ease-out 0ms both;
   }
+
+  .hero-mobile-kicker::before,
+  .hero-mobile-kicker::after {
+    content: '';
+    display: inline-block;
+    width: 48px;
+    height: 1px;
+    background-color: var(--verde-destaque, #5CE69B);
+    opacity: 0.6;
+  }
+
+  /* 2º: Wordmark MONTESE grande com "pizzaria" e as bandeirinhas centralizados abaixo */
   .hero-brand-lockup {
-    display: flex !important;
-  }
-  .status-badge {
-    padding: 0.45rem 0.95rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 1.15rem;
-    white-space: normal;
-  }
-  .status-badge.is-closed {
-    background-color: rgba(225, 10, 23, 0.2);
-    color: #FF8A92;
-    border-color: rgba(225, 10, 23, 0.45);
-  }
-  .status-badge.is-closed .status-dot {
-    background-color: currentColor;
-  }
-  .status-dot {
-    width: 9px;
-    height: 9px;
-  }
-  .hero-title {
-    font-size: clamp(1.75rem, 3.5vw, 2.45rem);
-    line-height: 1.22;
-    margin-bottom: 1rem;
-    text-align: left;
-    text-wrap: normal;
-  }
-  .hero-subtitle {
-    font-size: clamp(1rem, 1.8vw, 1.12rem);
-    line-height: 1.6;
-    margin-bottom: 2rem;
-    text-align: left;
-    text-wrap: normal;
-    max-width: 540px;
-  }
-  .hero-subtitle-rest {
-    display: inline !important;
-  }
-  .hero-decorations {
-    display: block !important;
-  }
-  .hero-visual {
-    display: flex !important;
-    justify-content: center;
-    margin: 1.5rem 0;
-  }
-  .hero-carousel-wrap {
-    display: block !important;
-  }
-  .hero-pizza-frame {
-    width: clamp(380px, 58vw, 480px);
-  }
-  .hero-buttons {
-    flex-direction: row;
-    gap: 0.85rem;
-    margin-bottom: 2rem;
-    width: auto;
-  }
-  .hero-buttons .btn {
-    width: auto;
-    flex: 0 1 auto;
-    padding: 1rem 1.5rem;
-    min-height: 48px;
-    font-size: 1rem;
-  }
-  .hero-buttons .btn-secondary {
-    display: inline-flex !important;
-  }
-  .hero-meta {
+    order: 2;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    grid-template-columns: none;
-    gap: 1.25rem;
-    padding-top: 1.25rem;
-    padding-bottom: 0;
-    border-top: 1px solid var(--azul-borda);
-    border-bottom: none;
-    width: auto;
-  }
-  .hero-meta-item {
-    display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    text-align: left;
-    padding: 0;
-    gap: 0.45rem;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: var(--esp-16, 16px);
+    animation: heroFadeInUp 600ms ease-out 80ms both;
   }
-  .hero-meta-item::after {
+
+  /* Esconde a bandeira tricolor grande que repete a marca no PC (mantida no HTML) */
+  .hero-tricolor-ribbon {
     display: none;
   }
-  .hero-meta-item svg {
-    width: 18px;
-    height: 18px;
-    color: var(--verde);
-    stroke: currentColor;
+
+  .hero-wordmark-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     margin-bottom: 0;
   }
-  .hero-meta-item span {
-    font-size: 0.88rem;
-    line-height: inherit;
-    color: rgba(250, 248, 243, 0.8);
-    text-wrap: normal;
+
+  .hero-wordmark-display .wm-main {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(56px, 6vw, 96px);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--creme, #FAF8F3);
+    line-height: 0.95;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-wordmark-display .wm-sub {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--fonte-texto);
+    font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    text-transform: lowercase;
+    color: var(--creme, #FAF8F3);
+    margin-top: 6px;
+    padding-left: 0.35em;
+  }
+
+  .hero-wordmark-display .wm-sub svg {
+    width: 18px;
+    height: 12px;
+  }
+
+  /* 3º: Selo Aberto/Fechado compacto */
+  .status-badge {
+    order: 3;
+    align-self: center;
+    margin-top: 0;
+    margin-bottom: var(--esp-16, 16px);
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: heroFadeInUp 600ms ease-out 160ms both;
+  }
+
+  /* 4º: Título atual */
+  .hero-title {
+    order: 4;
+    font-family: var(--fonte-titulo);
+    font-size: clamp(28px, 2.8vw, 44px);
+    line-height: 1.15;
+    text-wrap: balance;
+    color: var(--creme, #FAF8F3);
+    margin-bottom: var(--esp-16, 16px);
+    text-align: center;
+    animation: heroFadeInUp 600ms ease-out 240ms both;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--verde-destaque, #5CE69B);
+  }
+
+  /* 5º: Subtítulo atual de até 3 linhas em 17 a 18px */
+  .hero-subtitle {
+    order: 5;
+    font-size: clamp(17px, 1.15vw, 18px);
+    line-height: 1.5;
+    color: rgba(250, 248, 243, 0.9);
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: var(--esp-32, 32px);
+    text-align: center;
+    text-wrap: pretty;
+    animation: heroFadeInUp 600ms ease-out 320ms both;
+  }
+
+  .hero-subtitle-rest {
+    display: inline;
+  }
+
+  /* 6º: Botões lado a lado, centralizados */
+  .hero-buttons {
+    order: 6;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: var(--esp-16, 16px);
+    margin-bottom: 0;
+    width: 100%;
+    animation: heroFadeInUp 600ms ease-out 400ms both;
+  }
+
+  .hero-buttons .btn {
+    width: auto;
+    flex: 0 0 auto;
+    height: 52px;
+    min-height: 52px;
+    padding: 0 1.85rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--raio-p, 8px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transicao), border-color var(--transicao), color var(--transicao), box-shadow var(--transicao), transform var(--transicao);
+  }
+
+  /* Botão Principal: Vermelho sólido #E10A17 em destaque */
+  .hero-buttons .btn-primary {
+    background-color: var(--vermelho, #E10A17);
+    color: var(--branco, #FFFFFF);
+    border: none;
+    box-shadow: 0 4px 16px rgba(225, 10, 23, 0.38);
+  }
+
+  .hero-buttons .btn-primary:hover {
+    background-color: var(--vermelho-escuro, #B8000E);
+    box-shadow: 0 6px 20px rgba(225, 10, 23, 0.52);
+    transform: translateY(-2px);
+  }
+
+  /* Botão Secundário: Contorno fino creme, fundo transparente */
+  .hero-buttons .btn-secondary {
+    display: inline-flex;
+    background-color: transparent;
+    border: 1px solid rgba(250, 248, 243, 0.5);
+    color: var(--creme, #FAF8F3);
+    font-weight: 600;
+    box-shadow: none;
+  }
+
+  .hero-buttons .btn-secondary:hover {
+    border-color: rgba(250, 248, 243, 0.9);
+    background-color: rgba(250, 248, 243, 0.08);
+    color: var(--branco, #FFFFFF);
+    transform: translateY(-2px);
+  }
+
+  /* Elementos que saem do Hero no PC: escondidos para respiro visual e mantidos no código */
+  .hero-mobile-media,
+  .hero-meta,
+  .hero-carousel-wrap,
+  .hero-visual,
+  .hero-decorations {
+    display: none;
+  }
+
+  /* Ajuste de scroll para âncora do Cardápio */
+  #cardapio {
+    scroll-margin-top: calc(var(--altura-header, 68px) + 20px);
   }
 }
 
-@media (min-width: 1024px) {
-  .hero-grid {
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 2rem;
+/* 5. Ajustes específicos para Tablet (768px a 1023px) */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .hero {
+    min-height: clamp(480px, calc(100vh - var(--altura-header, 68px)), 680px);
+    min-height: clamp(480px, calc(100svh - var(--altura-header, 68px)), 680px);
+    padding: clamp(2rem, 4vh, 3.5rem) 32px;
   }
-  .hero-visual {
-    margin-right: -10vw;
-    justify-content: flex-end;
+
+  .hero-content {
+    max-width: 100%;
   }
-  .hero-pizza-frame {
-    width: clamp(520px, 46vw, 680px);
+
+  .hero-wordmark-display .wm-main {
+    font-size: clamp(48px, 7vw, 72px);
+  }
+
+  .hero-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 
-/* Desativação de rotação, flutuação e transições no Hero com prefers-reduced-motion */
+/* 6. Animações Sutis */
+@keyframes heroSlowZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes heroFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 7. Acessibilidade: prefers-reduced-motion desativa zoom e animações de entrada */
 @media (prefers-reduced-motion: reduce) {
-  .hero-pizza-spin-layer {
-    animation: none !important;
+  .hero-bg-img,
+  .hero-mobile-kicker,
+  .hero-brand-lockup,
+  .status-badge,
+  .hero-title,
+  .hero-subtitle,
+  .hero-buttons,
+  .hero-buttons .btn {
+    animation: none;
+    transform: none;
+    opacity: 1;
+    transition: none;
   }
-  .hero-decor svg {
-    animation: none !important;
-  }
-  .status-badge.is-open .status-dot,
-  .status-dot {
-    animation: none !important;
-  }
-  .hero-decor {
-    transform: none !important;
-    transition: none !important;
-  }
-  .hero-main-pizza {
-    transition: none !important;
-  }
-  .hero-thumb-card,
-  .hero-thumb-img-box,
-  .hero-thumb-img-box img {
-    transition: none !important;
-  }
+}
   .hero-mobile-pizza-img {
     animation: none !important;
     transform: rotate(-6deg) !important;

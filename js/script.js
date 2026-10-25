@@ -2631,7 +2631,7 @@ function teardownDesktopHero() {
   if (decorContainer) decorContainer.innerHTML = '';
 }
 
-// Inicializa a composição interativa do Hero (PC / Tablet >= 768px)
+// Inicializa a composição do Hero no PC / Tablet (>= 768px)
 function initHeroComposition() {
   const isDesktop = window.matchMedia(`(min-width: ${BREAKPOINT_DESKTOP}px)`).matches;
   if (!isDesktop) {
@@ -2639,141 +2639,9 @@ function initHeroComposition() {
     return;
   }
 
-  const thumbnailsContainer = $('heroThumbnails');
-  const heroVisual = $('heroVisual');
-  if (!thumbnailsContainer || !heroVisual) return;
-
-  // Filtra as pizzas com destaqueHero: true (ou primeiras 5 se não houver filtro)
-  let heroPizzas = MENU_ITEMS.filter(item => item.destaqueHero);
-  if (heroPizzas.length === 0) {
-    heroPizzas = MENU_ITEMS.filter(item => ['tradicionais', 'especiais'].includes(item.category)).slice(0, 5);
-  }
-
-  if (!heroPizzas.some(p => p.id === currentHeroPizzaId)) {
-    currentHeroPizzaId = heroPizzas[0].id;
-  }
-
-  const currentPizza = heroPizzas.find(p => p.id === currentHeroPizzaId) || heroPizzas[0];
-
-  renderDesktopHeroVisual(currentPizza);
-  renderDesktopHeroDecor();
-
-  function renderHeroThumbnails() {
-    thumbnailsContainer.innerHTML = heroPizzas.map(pizza => {
-      const isActive = (pizza.id === currentHeroPizzaId);
-      const displayPrice = pizza.prices ? pizza.prices.G : pizza.price;
-
-      return `
-        <button type="button"
-                class="hero-thumb-btn ${isActive ? 'is-active' : ''}"
-                data-hero-id="${pizza.id}"
-                aria-label="Ver pizza ${pizza.name}"
-                aria-pressed="${isActive ? 'true' : 'false'}">
-          <div class="hero-thumb-card">
-            <div class="hero-thumb-img-box">
-              <img src="${pizza.image}" alt="${pizza.name}" loading="lazy" width="60" height="60">
-            </div>
-            <span class="hero-thumb-name">${pizza.name}</span>
-            <span class="hero-thumb-price">${formatBRL(displayPrice)}</span>
-          </div>
-        </button>
-      `;
-    }).join('');
-  }
-
-  function switchHeroPizza(targetId, isManualAction = false) {
-    if (targetId === currentHeroPizzaId) return;
-
-    const targetPizza = heroPizzas.find(p => p.id === targetId);
-    if (!targetPizza) return;
-
-    currentHeroPizzaId = targetId;
-
-    const buttons = thumbnailsContainer.querySelectorAll('.hero-thumb-btn');
-    buttons.forEach(btn => {
-      const btnId = btn.getAttribute('data-hero-id');
-      const isNowActive = (btnId === currentHeroPizzaId);
-      btn.classList.toggle('is-active', isNowActive);
-      btn.setAttribute('aria-pressed', String(isNowActive));
-    });
-
-    const mainPizzaImg = $('heroMainPizzaImg');
-    if (mainPizzaImg) {
-      mainPizzaImg.classList.add('switching');
-      setTimeout(() => {
-        mainPizzaImg.src = targetPizza.image;
-        mainPizzaImg.alt = `Pizza ${targetPizza.name} artesanal da Montese pizzaria`;
-        mainPizzaImg.classList.remove('switching');
-      }, 200);
-    }
-
-    if (isManualAction) {
-      restartAutoplay();
-    }
-  }
-
-  function nextHeroPizza() {
-    const currentIndex = heroPizzas.findIndex(p => p.id === currentHeroPizzaId);
-    const nextIndex = (currentIndex + 1) % heroPizzas.length;
-    switchHeroPizza(heroPizzas[nextIndex].id, false);
-  }
-
-  function prevHeroPizza() {
-    const currentIndex = heroPizzas.findIndex(p => p.id === currentHeroPizzaId);
-    const prevIndex = (currentIndex - 1 + heroPizzas.length) % heroPizzas.length;
-    switchHeroPizza(heroPizzas[prevIndex].id, false);
-  }
-
-  function startAutoplay() {
-    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isReducedMotion) return;
-
-    clearInterval(heroAutoplayTimer);
-    heroAutoplayTimer = setInterval(nextHeroPizza, HERO_AUTOPLAY_INTERVAL_MS);
-  }
-
-  function pauseAutoplay() {
-    clearInterval(heroAutoplayTimer);
-  }
-
-  function restartAutoplay() {
-    pauseAutoplay();
-    startAutoplay();
-  }
-
-  renderHeroThumbnails();
-  startAutoplay();
-
-  thumbnailsContainer.onclick = (e) => {
-    const btn = e.target.closest('.hero-thumb-btn');
-    if (!btn) return;
-    const pizzaId = btn.getAttribute('data-hero-id');
-    switchHeroPizza(pizzaId, true);
-  };
-
-  thumbnailsContainer.onkeydown = (e) => {
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      nextHeroPizza();
-      thumbnailsContainer.querySelector('.hero-thumb-btn.is-active')?.focus();
-    } else if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      prevHeroPizza();
-      thumbnailsContainer.querySelector('.hero-thumb-btn.is-active')?.focus();
-    }
-  };
-
-  const carouselWrap = $('heroCarouselWrap');
-  [carouselWrap, heroVisual].forEach(container => {
-    if (!container) return;
-    container.onmouseenter = pauseAutoplay;
-    container.onmouseleave = startAutoplay;
-    container.onfocusin = pauseAutoplay;
-    container.onfocusout = startAutoplay;
-    container.ontouchstart = pauseAutoplay;
-  });
-
-  initHeroParallax();
+  // O novo hero desktop usa foto horizontal ponta a ponta e degradê escuro.
+  // Desativa e limpa recursos dinâmicos do hero antigo (pizza giratória, miniaturas, autoplay e parallax).
+  teardownDesktopHero();
 }
 
 // Parallax sutil nos elementos decorativos (manjericão e tomates) apenas em telas grandes
