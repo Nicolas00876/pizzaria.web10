@@ -33,6 +33,10 @@ const THUMB_LISTA_PX = 72;        // Lado da foto quadrada da linha compacta (va
 const VIBRACAO_MS = 10;           // Vibração curta ao adicionar/remover (quando o aparelho suporta)
 const VOLTAR_TOPO_TELAS = 1;      // Quantas alturas de tela rolar dentro do cardápio antes de mostrar o "↑"
 
+// Constantes da Etapa 2: simplificação da home no celular (< 768px)
+const MOSTRAR_STATUS_NO_HEADER = true; // Pontinho de 8px (verde/cinza) ao lado do logo no header
+const OFERTA_DESTAQUE_MOBILE_ID = 'of-combo-familia'; // ID do Combo Família exibido como oferta única no celular
+
 // Tamanhos de pizza (mesmos da legenda do HTML): código, nome e fatias
 const TAMANHOS_PIZZA = [
   { codigo: 'P', nome: 'Brotinho', fatias: 4 },
@@ -45,7 +49,7 @@ const TAMANHOS_PIZZA = [
 // Altere true/false para ligar ou desligar qualquer seção no celular:
 const SECOES_NO_CELULAR = {
   destaques: false,
-  ofertas: true,
+  ofertas: false,
   cardapio: true,
   sobre: false,
   avaliacoes: false,
@@ -583,10 +587,30 @@ function updateStoreStatus() {
       badge.classList.toggle('is-closed', !isOpen);
       if (text) text.textContent = statusText;
     });
+
+    // Pontinho de status no header ao lado do logo (somente celular)
+    const headerDot = $('headerStatusDot');
+    if (headerDot) {
+      if (!MOSTRAR_STATUS_NO_HEADER) {
+        headerDot.style.display = 'none';
+      } else {
+        headerDot.style.display = '';
+        headerDot.classList.toggle('is-open', isOpen);
+        headerDot.classList.toggle('is-closed', !isOpen);
+        headerDot.setAttribute('aria-label', isOpen ? 'Aberto agora' : 'Fechado · abre às 18h00');
+      }
+    }
   } catch (err) {
     badges.forEach(({ badge, text }) => {
       if (text) text.textContent = 'Terça a Domingo • 18h às 23h30';
     });
+    const headerDot = $('headerStatusDot');
+    if (headerDot && MOSTRAR_STATUS_NO_HEADER) {
+      headerDot.style.display = '';
+      headerDot.classList.toggle('is-open', false);
+      headerDot.classList.toggle('is-closed', true);
+      headerDot.setAttribute('aria-label', 'Fechado · abre às 18h00');
+    }
   }
 }
 
@@ -786,12 +810,50 @@ function foldText(text) {
     .replace(/([a-z])\1+/g, '$1');
 }
 
-// Índice de busca montado uma única vez a partir do próprio array do cardápio (sem duplicar dados)
+// Índice de busca montado uma única vez a partir do próprio array do cardápio (sem duplicar dados).
+// Inclui nome, ingredientes/descrição, categoria e palavras-chave (bebida/pizza) para busca completa.
 const MENU_SEARCH_INDEX = new Map(
-  MENU_ITEMS.map(item => [item.id, foldText(`${item.name} ${item.description}`)])
+  MENU_ITEMS.map(item => [
+    item.id,
+    foldText(`${item.name} ${item.description || ''} ${item.category || ''} ${item.category === 'bebidas' ? 'bebida bebidas' : ''} ${item.prices ? 'pizza pizzas' : ''}`)
+  ])
 );
 
-// Itens da categoria ativa; no celular também filtra pelo texto da busca (todas as palavras precisam aparecer)
+// Seções fixas do cardápio contínuo no celular (< 768px), na ordem oficial dos dados
+const MENU_SECTIONS = [
+  { id: 'tradicionais', name: 'Pizzas Tradicionais' },
+  { id: 'especiais', name: 'Especiais Montese' },
+  { id: 'doces', name: 'Pizzas Doces' },
+  { id: 'bebidas', name: 'Bebidas' }
+];
+
+// Gera a lista contínua com título por categoria para o celular (< 768px)
+function renderContinuousMenuHTML() {
+  return `
+    <div class="menu-continuous-list">
+      ${MENU_SECTIONS.map(section => {
+        const sectionItems = MENU_ITEMS.filter(item => item.category === section.id);
+        // Itens com selo ou destaque continuam aparecendo primeiro dentro da seção
+        sectionItems.sort((a, b) => ((b.destaque || b.selo) ? 1 : 0) - ((a.destaque || a.selo) ? 1 : 0));
+
+        return `
+          <section class="menu-category-section" id="categoria-${section.id}" data-category="${section.id}">
+            <div class="menu-category-header">
+              <h3 class="menu-category-title">${section.name}</h3>
+            </div>
+            <div class="menu-category-items">
+              ${sectionItems.map(item => renderMenuItem(item, true)).join('')}
+            </div>
+          </section>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// Itens do cardápio: no PC filtra por categoria; no celular (< 768px), com busca ativa gera
+// UMA lista plana de resultados com todos os itens correspondentes (inclusive bebidas), respeitando o tamanho global.
+// Sem busca ativa, retorna os itens da categoria selecionada (com itens em destaque primeiro no celular).
 function getVisibleMenuItems(compact) {
   const byCategory = MENU_ITEMS.filter(item => {
     if (state.currentCategory === 'todos') return true;
@@ -800,12 +862,16 @@ function getVisibleMenuItems(compact) {
   if (!compact) return byCategory;
 
   const terms = foldText(state.searchQuery).split(' ').filter(Boolean);
-  if (terms.length === 0) return byCategory;
+  if (terms.length === 0) {
+    // No celular: itens com destaque: true aparecem primeiro dentro da categoria
+    return [...byCategory].sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
+  }
 
-  return byCategory.filter(item => {
+  // Busca ativa: lista plana em todo o cardápio (itens em destaque primeiro)
+  return MENU_ITEMS.filter(item => {
     const haystack = MENU_SEARCH_INDEX.get(item.id) || '';
     return terms.every(term => haystack.includes(term));
-  });
+  }).sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
 }
 
 // Tamanho efetivo do item. PC: escolha do próprio card (ou padrão). Celular: exceção do item ou tamanho global.
@@ -887,6 +953,15 @@ function buildItemControlHTML(item, size) {
     </div>`;
 }
 
+// Etiqueta pequena do item no celular para itens em destaque.
+// Se nenhum item tiver selo, usa "Sugestão da casa".
+// CONFIRMAR COM A PIZZARIA QUAIS SÃO AS MAIS PEDIDAS ANTES DE USAR O SELO 'MAIS PEDIDA'
+function buildCompactSeloHTML(item) {
+  if (!item.destaque) return '';
+  const selo = item.selo || 'Sugestão da casa';
+  return `<span class="card-item-selo">${selo}</span>`;
+}
+
 // Um item do cardápio. Mesmo caminho para PC e celular: o PC gera o card grande de sempre;
 // o celular gera a linha compacta (classe card-item--compact) com as mesmas classes-base.
 function renderMenuItem(item, compact) {
@@ -896,14 +971,17 @@ function renderMenuItem(item, compact) {
   const badgeHTML = buildBadgeHTML(item);
 
   if (compact) {
+    const seloHTML = buildCompactSeloHTML(item);
     return `
       <article class="card-item card-item--compact" data-item-id="${item.id}">
         <div class="card-img-box">
           ${buildThumbImageHTML(item)}
-          ${badgeHTML}
         </div>
         <div class="card-body">
-          <h3 class="card-title">${item.name}</h3>
+          <div class="card-title-row">
+            <h3 class="card-title">${item.name}</h3>
+            ${seloHTML}
+          </div>
           <p class="card-desc">${item.description}</p>
         </div>
         <div class="card-footer">
@@ -959,16 +1037,206 @@ function renderEmptyMenuHTML() {
   `;
 }
 
-// Renderiza a grade de itens do cardápio (cards no PC, lista compacta no celular)
+// Centraliza a aba ativa no container horizontal sem deslocar a página verticalmente
+function scrollTabIntoView(tabBtn) {
+  if (!tabBtn) return;
+  const container = tabBtn.closest('.menu-tabs');
+  if (!container) return;
+
+  // Se o container não tiver transbordamento horizontal, não precisa rolar
+  if (container.scrollWidth <= container.clientWidth) return;
+
+  const scrollTarget = tabBtn.offsetLeft - (container.clientWidth - tabBtn.clientWidth) / 2;
+  container.scrollTo({
+    left: Math.max(0, scrollTarget),
+    behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+  });
+}
+
+// Atualiza dicas de gradiente de rolagem nas bordas das abas
+function updateTabScrollGradients() {
+  const tabsWrapper = document.querySelector('.menu-tabs-wrapper');
+  const tabsContainer = document.querySelector('.menu-tabs');
+  if (!tabsWrapper || !tabsContainer) return;
+
+  const scrollLeft = tabsContainer.scrollLeft;
+  const maxScroll = tabsContainer.scrollWidth - tabsContainer.clientWidth;
+
+  if (scrollLeft > 2) {
+    tabsWrapper.classList.add('has-scroll-left');
+  } else {
+    tabsWrapper.classList.remove('has-scroll-left');
+  }
+
+  if (maxScroll > 2 && scrollLeft < maxScroll - 2) {
+    tabsWrapper.classList.add('has-scroll-right');
+  } else {
+    tabsWrapper.classList.remove('has-scroll-right');
+  }
+}
+
+let isProgrammaticScrolling = false;
+let programmaticScrollTimer = null;
+
+// Marca a categoria ativa na UI (aria-current, classes e centralização)
+function setActiveCategoryUI(catId) {
+  state.currentCategory = catId;
+  const tabs = document.querySelectorAll('.menu-tab-btn');
+  let activeTabBtn = null;
+
+  tabs.forEach(btn => {
+    const isTarget = btn.getAttribute('data-category') === catId;
+    btn.classList.toggle('active', isTarget);
+    btn.setAttribute('aria-selected', String(isTarget));
+    if (isTarget) {
+      btn.setAttribute('aria-current', 'true');
+      btn.setAttribute('tabindex', '0');
+      activeTabBtn = btn;
+    } else {
+      btn.removeAttribute('aria-current');
+      btn.setAttribute('tabindex', '-1');
+    }
+  });
+
+  if (activeTabBtn) {
+    scrollTabIntoView(activeTabBtn);
+  }
+  updateTabScrollGradients();
+}
+
+// Rola suavemente até o título da seção de categoria no celular
+function scrollToCategorySection(catId) {
+  if (catId === 'ofertas') {
+    const target = $('mobileOfferBanner') || $('ofertas');
+    if (target) {
+      target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
+  // Tocar numa categoria durante a busca limpa a busca para restaurar a lista contínua
+  if (state.searchQuery !== '') {
+    clearSearch();
+  }
+
+  const targetSection = document.getElementById(`categoria-${catId}`);
+  if (!targetSection) return;
+
+  // Marca ativa imediatamente sem piscar e ignora o observer durante a rolagem
+  setActiveCategoryUI(catId);
+  isProgrammaticScrolling = true;
+  clearTimeout(programmaticScrollTimer);
+
+  targetSection.scrollIntoView({
+    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    block: 'start'
+  });
+
+  const scrollDuration = prefersReducedMotion() ? 50 : 800;
+  programmaticScrollTimer = setTimeout(() => {
+    isProgrammaticScrolling = false;
+  }, scrollDuration);
+}
+
+let stickyFiltersObserver = null;
+
+// Observa o elemento sentinela para alternar a classe .is-stuck no modo sticky sem usar evento scroll
+function initStickyFiltersObserver() {
+  if (stickyFiltersObserver) {
+    stickyFiltersObserver.disconnect();
+    stickyFiltersObserver = null;
+  }
+
+  const sentinel = $('menuFiltersSentinel');
+  const filtersBar = $('menuFiltersBar');
+  if (!sentinel || !filtersBar) return;
+
+  if (!isCompactLayout()) {
+    filtersBar.classList.remove('is-stuck');
+    return;
+  }
+
+  const header = document.querySelector('.site-header') || document.querySelector('header');
+  const headerHeight = header ? Math.round(header.offsetHeight) : 58;
+
+  // Sincroniza o estado inicial imediatamente com base na posição da sentinela
+  const initialSentinelRect = sentinel.getBoundingClientRect();
+  const initialStuck = initialSentinelRect.top <= headerHeight;
+  filtersBar.classList.toggle('is-stuck', initialStuck);
+
+  stickyFiltersObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // Quando a sentinela (logo acima da barra) ultrapassa a base do header, a barra gruda
+      const isStuck = !entry.isIntersecting && entry.boundingClientRect.top <= headerHeight;
+      filtersBar.classList.toggle('is-stuck', isStuck);
+    });
+  }, {
+    root: null,
+    rootMargin: `-${headerHeight}px 0px 0px 0px`,
+    threshold: [0, 1.0]
+  });
+
+  stickyFiltersObserver.observe(sentinel);
+}
+
+let categoryScrollSpyObserver = null;
+
+// Observa as seções para atualizar a categoria ativa durante a rolagem no celular sem usar evento scroll
+function initCategoryScrollSpy() {
+  if (categoryScrollSpyObserver) {
+    categoryScrollSpyObserver.disconnect();
+    categoryScrollSpyObserver = null;
+  }
+
+  if (!isCompactLayout() || Boolean(state.searchQuery.trim())) {
+    return;
+  }
+
+  const sections = document.querySelectorAll('.menu-category-section');
+  if (sections.length === 0) return;
+
+  const header = document.querySelector('.site-header') || document.querySelector('header');
+  const headerHeight = header ? header.offsetHeight : 58;
+  const compactBarHeight = 54;
+  const topOffset = headerHeight + compactBarHeight + 8; // ~120px
+
+  categoryScrollSpyObserver = new IntersectionObserver((entries) => {
+    if (isProgrammaticScrolling) return;
+
+    // Seções visíveis na área de leitura
+    const intersecting = entries.filter(e => e.isIntersecting);
+    if (intersecting.length === 0) return;
+
+    // Seleciona a seção mais próxima do topo da área de leitura
+    intersecting.sort((a, b) => Math.abs(a.boundingClientRect.top - topOffset) - Math.abs(b.boundingClientRect.top - topOffset));
+    const activeSection = intersecting[0].target;
+    const catId = activeSection.getAttribute('data-category');
+    if (catId && catId !== state.currentCategory) {
+      setActiveCategoryUI(catId);
+    }
+  }, {
+    root: null,
+    rootMargin: `-${topOffset}px 0px -50% 0px`,
+    threshold: [0, 0.1, 0.25, 0.5]
+  });
+
+  sections.forEach(sec => categoryScrollSpyObserver.observe(sec));
+}
+
+// Renderiza a grade de itens do cardápio (cards no PC, lista compacta contínua no celular)
 function renderMenu() {
   const grid = $('menuGrid');
   const legend = $('sizeLegend');
   if (!grid) return;
 
   const compact = isCompactLayout();
+  const visibleItems = getVisibleMenuItems(compact);
 
   if (legend) {
-    legend.style.display = (state.currentCategory === 'bebidas') ? 'none' : 'block';
+    const hasPizzas = state.searchQuery.trim()
+      ? visibleItems.some(item => Boolean(item.prices))
+      : (state.currentCategory !== 'bebidas');
+    legend.style.display = hasPizzas ? 'block' : 'none';
   }
 
   // Variação de layout por classe CSS. Na lista compacta o aviso ao leitor de tela vem da região de busca;
@@ -976,12 +1244,31 @@ function renderMenu() {
   grid.classList.toggle('menu-grid--lista', compact);
   grid.setAttribute('aria-live', compact ? 'off' : 'polite');
 
-  syncSizeBar();
+  syncSizeBar(visibleItems);
 
-  const visibleItems = getVisibleMenuItems(compact);
-  grid.innerHTML = visibleItems.length > 0
-    ? visibleItems.map(item => renderMenuItem(item, compact)).join('')
-    : renderEmptyMenuHTML();
+  if (compact) {
+    if (state.searchQuery.trim() !== '') {
+      // Busca ativa: lista plana de resultados com todos os itens correspondentes
+      grid.innerHTML = visibleItems.length > 0
+        ? visibleItems.map(item => renderMenuItem(item, true)).join('')
+        : renderEmptyMenuHTML();
+      if (categoryScrollSpyObserver) {
+        categoryScrollSpyObserver.disconnect();
+      }
+    } else {
+      // Sem busca ativa: lista única contínua com título de seção por categoria
+      grid.innerHTML = renderContinuousMenuHTML();
+      initCategoryScrollSpy();
+      if (state.currentCategory === 'todos' || !state.currentCategory) {
+        setActiveCategoryUI('tradicionais');
+      }
+    }
+  } else {
+    // Desktop/Tablet (>= 768px): grade tradicional filtrada pelas abas
+    grid.innerHTML = visibleItems.length > 0
+      ? visibleItems.map(item => renderMenuItem(item, false)).join('')
+      : renderEmptyMenuHTML();
+  }
 
   syncMenuQuantityControls();
   updateSearchStatus(visibleItems.length);
@@ -1020,12 +1307,22 @@ function renderSizeBar() {
   syncSizeBar();
 }
 
-// Marca o tamanho global ativo e esconde a faixa quando a categoria não tem pizzas (Bebidas)
-function syncSizeBar() {
+// Marca o tamanho global ativo e no celular mantém a faixa no topo da lista (escondendo apenas durante busca sem pizzas)
+function syncSizeBar(visibleItems) {
   const bar = $('sizeBar');
   if (!bar) return;
 
-  bar.hidden = (state.currentCategory === 'bebidas');
+  if (isCompactLayout()) {
+    const isSearchActive = Boolean(state.searchQuery.trim());
+    if (isSearchActive && Array.isArray(visibleItems)) {
+      bar.hidden = !visibleItems.some(item => Boolean(item.prices));
+    } else {
+      bar.hidden = false;
+    }
+  } else {
+    bar.hidden = (state.currentCategory === 'bebidas');
+  }
+
   bar.querySelectorAll('[data-global-size]').forEach(btn => {
     const isActive = btn.getAttribute('data-global-size') === state.globalSize;
     btn.classList.toggle('is-active', isActive);
@@ -1158,7 +1455,7 @@ function clearSearch() {
   applySearchQuery('');
 }
 
-// Anuncia a quantidade de resultados (região role="status" do HTML); vazio quando não há busca ativa
+// Anuncia a quantidade de resultados (região role="status" do HTML com aria-live="polite"); vazio quando não há busca ativa
 function updateSearchStatus(resultCount) {
   const status = $('menuSearchStatus');
   if (!status) return;
@@ -1168,8 +1465,8 @@ function updateSearchStatus(resultCount) {
     return;
   }
   status.textContent = resultCount === 0
-    ? 'Nenhum sabor encontrado.'
-    : `${resultCount} ${resultCount === 1 ? 'resultado encontrado' : 'resultados encontrados'}.`;
+    ? 'Nenhum sabor encontrado. Tente outro nome.'
+    : `${resultCount} ${resultCount === 1 ? 'sabor encontrado' : 'sabores encontrados'}`;
 }
 
 function initMenuSearch() {
@@ -1179,9 +1476,16 @@ function initMenuSearch() {
 
   input.addEventListener('input', () => {
     clearBtn.hidden = (input.value === '');
-    // Debounce: filtra só depois de uma pausa na digitação, para a lista não piscar a cada letra
+    // Debounce de 150ms (SEARCH_DEBOUNCE_MS): filtra após pausa na digitação para evitar flickering
     clearTimeout(searchDebounceTimer);
     searchDebounceTimer = setTimeout(() => applySearchQuery(input.value), SEARCH_DEBOUNCE_MS);
+  });
+
+  input.addEventListener('search', () => {
+    // Trata o botão nativo de limpar (botão 'x' em inputs type="search" no mobile)
+    if (input.value === '') {
+      clearSearch();
+    }
   });
 
   input.addEventListener('keydown', (e) => {
@@ -1189,11 +1493,13 @@ function initMenuSearch() {
       e.preventDefault();
       clearSearch();
     } else if (e.key === 'Enter') {
-      // Fecha o teclado do celular para o cliente ver a lista filtrada
+      e.preventDefault();
+      // Enter fecha o teclado do celular (blur) e leva a tela ao início dos resultados
       clearTimeout(searchDebounceTimer);
       applySearchQuery(input.value);
       input.blur();
-      $('cardapio')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      const resultsEl = $('menuGrid') || $('cardapio');
+      resultsEl?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     }
   });
 
@@ -1503,11 +1809,25 @@ function removeOneFromList(itemId, buttonEl) {
   }
 }
 
-// Ao cruzar o ponto de corte (girar o aparelho, redimensionar): redesenha a lista no layout certo
+// Ao cruzar o ponto de corte (girar o aparelho, redimensionar): redesenha a lista no layout certo e reajusta observadores
 function refreshMenuForLayoutChange() {
   closeSizeSheet();
   renderMenu();
   updateBackToMenuTop();
+  if (isCompactLayout()) {
+    initStickyFiltersObserver();
+    initCategoryScrollSpy();
+  } else {
+    if (stickyFiltersObserver) {
+      stickyFiltersObserver.disconnect();
+      stickyFiltersObserver = null;
+    }
+    if (categoryScrollSpyObserver) {
+      categoryScrollSpyObserver.disconnect();
+      categoryScrollSpyObserver = null;
+    }
+    $('menuFiltersBar')?.classList.remove('is-stuck');
+  }
 }
 
 // Renderiza todo o carrinho de compras (lista, resumo, frete e contadores)
@@ -1953,24 +2273,16 @@ let bottomNavObserver = null;
 function renderMobileBanner() {
   const carousel = $('mobileBannerCarousel');
   const dotsContainer = $('mobileBannerDots');
-  if (!carousel || !dotsContainer) return;
+  if (!carousel) return;
 
-  // Garante que o banner sempre inicie no slide 1
-  currentBannerSlide = 0;
-  carousel.scrollLeft = 0;
-
-  const { dayIndex } = getSaoPauloTimeInfo();
-  let todayOffer = OFFERS_ITEMS.find(o => o.diaDaSemana !== null && o.diaDaSemana === dayIndex);
-  if (!todayOffer) {
-    todayOffer = OFFERS_ITEMS.find(o => o.diaDaSemana === null) || OFFERS_ITEMS[0];
+  if (dotsContainer) {
+    dotsContainer.innerHTML = '';
   }
 
-  const freteMin = Math.round(FRETE_GRATIS_A_PARTIR_DE);
-  const retiradaOff = Math.round(DESCONTO_RETIRADA_PERCENTUAL * 100);
-
-  const slidesHTML = `
+  // Banner mobile: slide único da marca, sem carrossel e sem pontinhos
+  carousel.innerHTML = `
     <!-- Slide 1: Marca Montese -->
-    <div class="mobile-banner-slide mobile-banner-slide--brand" role="tabpanel" aria-roledescription="slide" aria-label="1 de 3: A arte da pizza artesanal">
+    <div class="mobile-banner-slide mobile-banner-slide--brand" role="region" aria-label="A arte da pizza artesanal">
       <div class="banner-slide-content">
         <h2 class="banner-slide-title">A arte da pizza artesanal para as suas <em>melhores noites</em>.</h2>
         <button type="button" class="btn btn-primary btn-banner-action" data-banner-action="scroll-cardapio" aria-label="Ver cardápio completo">Ver cardápio</button>
@@ -1979,100 +2291,18 @@ function renderMobileBanner() {
         <img src="img/pizza-hero-mobile.webp" alt="Pizza artesanal da Montese" width="180" height="180" fetchpriority="high" class="banner-pizza-img">
       </div>
     </div>
-
-    <!-- Slide 2: Oferta de Hoje -->
-    <div class="mobile-banner-slide mobile-banner-slide--offer" role="tabpanel" aria-roledescription="slide" aria-label="2 de 3: Oferta de hoje">
-      <div class="banner-slide-content">
-        <span class="slide-badge-today">★ Oferta de hoje</span>
-        <h2 class="banner-slide-title">${todayOffer.titulo}</h2>
-        <p class="banner-slide-price">
-          <span class="banner-price-cur">Por ${formatBRL(todayOffer.precoPor)}</span>
-          ${todayOffer.precoDe ? `<span class="banner-price-old">De ${formatBRL(todayOffer.precoDe)}</span>` : ''}
-        </p>
-        <button type="button" class="btn btn-primary btn-banner-action" data-banner-action="order-offer" data-offer-id="${todayOffer.id}" aria-label="Pedir ${todayOffer.titulo}">Pedir esta oferta</button>
-      </div>
-      <div class="banner-slide-media" aria-hidden="true">
-        <img src="${buildThumbUrl(todayOffer.imagem || MENU_ITEMS[0].image, 280)}" alt="${todayOffer.titulo}" width="180" height="180" loading="lazy" class="banner-pizza-img" onerror="this.src='img/pizza-hero-mobile.webp'">
-      </div>
-    </div>
-
-    <!-- Slide 3: Frete Grátis e Retirada -->
-    <div class="mobile-banner-slide mobile-banner-slide--perks" role="tabpanel" aria-roledescription="slide" aria-label="3 de 3: Vantagens da Montese">
-      <div class="banner-slide-content">
-        <span class="slide-badge-perk">Vantagens</span>
-        <h2 class="banner-slide-title">Frete grátis acima de R$ ${freteMin} ou ${retiradaOff}% off na retirada.</h2>
-        <button type="button" class="btn btn-primary btn-banner-action" data-banner-action="scroll-cardapio" aria-label="Aproveitar vantagens">Aproveitar</button>
-      </div>
-      <div class="banner-slide-media" aria-hidden="true">
-        <!-- TROCAR POR FOTO REAL DA MONTESE, DE CIMA, SEM TÁBUA -->
-        <img src="img/pizza-hero-mobile.webp" alt="Pizzas artesanais da Montese" width="180" height="180" loading="lazy" class="banner-pizza-img banner-pizza-img--rotated">
-      </div>
-    </div>
   `;
 
-  carousel.innerHTML = slidesHTML;
-
-  dotsContainer.innerHTML = [0, 1, 2].map(idx => `
-    <button type="button" class="mobile-banner-dot ${idx === currentBannerSlide ? 'is-active' : ''}" data-slide-index="${idx}" role="tab" aria-selected="${idx === currentBannerSlide}" aria-label="Ir para o slide ${idx + 1}"></button>
-  `).join('');
-
-  function updateActiveDot(index) {
-    currentBannerSlide = index;
-    dotsContainer.querySelectorAll('.mobile-banner-dot').forEach((dot, idx) => {
-      const isActive = (idx === index);
-      dot.classList.toggle('is-active', isActive);
-      dot.setAttribute('aria-selected', String(isActive));
-    });
-  }
-
-  function scrollToSlide(index) {
-    const slideWidth = carousel.offsetWidth;
-    carousel.scrollTo({
-      left: index * slideWidth,
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth'
-    });
-    updateActiveDot(index);
-  }
-
-  dotsContainer.onclick = (e) => {
-    const dot = e.target.closest('[data-slide-index]');
-    if (!dot) return;
-    const idx = parseInt(dot.getAttribute('data-slide-index'), 10);
-    scrollToSlide(idx);
-    restartBannerAutoplay();
-  };
-
-  let scrollTimeout = null;
-  carousel.onscroll = () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      const slideWidth = carousel.offsetWidth;
-      if (slideWidth <= 0) return;
-      const index = Math.round(carousel.scrollLeft / slideWidth);
-      if (index !== currentBannerSlide && index >= 0 && index < 3) {
-        updateActiveDot(index);
-      }
-    }, 60);
-  };
-
   carousel.onclick = (e) => {
-    const actionBtn = e.target.closest('[data-banner-action]');
-    if (!actionBtn) return;
-
-    const action = actionBtn.getAttribute('data-banner-action');
-    if (action === 'scroll-cardapio') {
-      const cardapioEl = $('cardapio') || $('menuFiltersBar');
-      if (cardapioEl) {
-        cardapioEl.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-      }
-    } else if (action === 'order-offer') {
-      const offerId = actionBtn.getAttribute('data-offer-id');
-      if (offerId) handleOfferClick(offerId);
+    const btn = e.target.closest('[data-banner-action="scroll-cardapio"]');
+    if (btn) {
+      const cardapio = $('cardapio') || $('menuFiltersBar');
+      if (cardapio) cardapio.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     }
   };
-
-  initBannerAutoplay();
 }
+
+
 
 function initBannerAutoplay() {
   clearInterval(bannerAutoplayTimer);
@@ -2163,38 +2393,32 @@ function renderMobileMaisPedidas() {
 function renderMobileOfferBanner() {
   const container = $('mobileOfferBanner');
   if (!container) return;
-  if (!SECOES_NO_CELULAR.ofertas) {
+
+  const combo = OFFERS_ITEMS.find(o => o.id === OFERTA_DESTAQUE_MOBILE_ID) || OFFERS_ITEMS[0];
+  if (!combo) {
     container.style.display = 'none';
     return;
   }
   container.style.display = '';
 
-  const { dayIndex } = getSaoPauloTimeInfo();
-  let todayOffer = OFFERS_ITEMS.find(o => o.diaDaSemana !== null && o.diaDaSemana === dayIndex);
-  if (!todayOffer) {
-    todayOffer = OFFERS_ITEMS.find(o => o.diaDaSemana === null) || OFFERS_ITEMS[0];
-  }
-
-  const isToday = (todayOffer.diaDaSemana !== null && todayOffer.diaDaSemana === dayIndex);
-  const badgeText = isToday ? '★ Oferta de hoje' : (todayOffer.badge || 'Destaque');
-  const savings = (todayOffer.precoDe && todayOffer.precoPor) ? formatBRL(todayOffer.precoDe - todayOffer.precoPor) : null;
+  const inclusoTexto = combo.descricao || combo.itensInclusos;
+  const badgeLabel = (combo.badge || 'COMBO').toUpperCase();
 
   container.innerHTML = `
     <div class="tricolor-bar" aria-hidden="true"></div>
-    <div class="mobile-offer-card-body">
-      <div class="mobile-offer-header">
-        <span class="mobile-offer-badge">${badgeText}</span>
-        ${savings ? `<span class="mobile-offer-savings">Economize ${savings}</span>` : ''}
+    <div class="mobile-combo-card-body">
+      <div class="mobile-combo-row-1">
+        <span class="mobile-combo-badge">${badgeLabel}</span>
+        <h3 class="mobile-combo-title">${combo.titulo}</h3>
       </div>
-      <h3 class="mobile-offer-title">${todayOffer.titulo}</h3>
-      <p class="mobile-offer-desc">${todayOffer.descricao}</p>
-      <div class="mobile-offer-footer">
-        <div class="mobile-offer-price-box">
-          ${todayOffer.precoDe ? `<span class="mobile-offer-old-price">De ${formatBRL(todayOffer.precoDe)}</span>` : ''}
-          <span class="mobile-offer-cur-price">Por ${formatBRL(todayOffer.precoPor)}</span>
+      <p class="mobile-combo-incluso">${inclusoTexto}</p>
+      <div class="mobile-combo-row-3">
+        <div class="mobile-combo-prices">
+          ${combo.precoDe ? `<span class="mobile-combo-price-old">De ${formatBRL(combo.precoDe)}</span>` : ''}
+          <span class="mobile-combo-price-cur">Por ${formatBRL(combo.precoPor)}</span>
         </div>
-        <button type="button" class="btn btn-primary btn-offer-cta" data-action="select-offer" data-offer-id="${todayOffer.id}" aria-label="Pedir ${todayOffer.titulo}">
-          Pedir esta oferta
+        <button type="button" class="btn btn-combo-cta" data-action="select-offer" data-offer-id="${combo.id}" aria-label="Pedir ${combo.titulo}">
+          Pedir combo
         </button>
       </div>
     </div>
@@ -2204,11 +2428,6 @@ function renderMobileOfferBanner() {
 function initMobileBottomNav() {
   const bar = $('mobileBottomBar');
   if (!bar) return;
-
-  const ofertasNav = $('mobileNavOfertas');
-  if (ofertasNav) {
-    ofertasNav.hidden = !SECOES_NO_CELULAR.ofertas;
-  }
 
   bar.addEventListener('click', (e) => {
     const navItem = e.target.closest('[data-nav-target]');
@@ -2222,19 +2441,16 @@ function initMobileBottomNav() {
       if (cardapioEl) {
         cardapioEl.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
       }
-    } else if (target === 'ofertas') {
-      const offerTarget = $('mobileOfferBanner') || $('ofertas');
-      if (offerTarget) {
-        offerTarget.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-      }
+    } else if (target === 'buscar') {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+      $('menuSearchInput')?.focus();
     }
   });
 
   if ('IntersectionObserver' in window) {
     const targets = [
       { id: 'inicio', navId: 'mobileNavInicio' },
-      { id: 'cardapio', navId: 'mobileNavCardapio' },
-      { id: 'mobileOfferBanner', navId: 'mobileNavOfertas' }
+      { id: 'cardapio', navId: 'mobileNavCardapio' }
     ];
 
     if (bottomNavObserver) {
@@ -2260,10 +2476,7 @@ function initMobileBottomNav() {
           }
         }
       });
-    }, {
-      rootMargin: '-30% 0px -50% 0px',
-      threshold: 0.1
-    });
+    }, { threshold: 0.2 });
 
     targets.forEach(t => {
       const el = $(t.id);
@@ -2733,53 +2946,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // ========================================================================
 
   /**
-   * Centraliza a aba ativa no container de rolagem horizontal
-   * Respeita a preferência do usuário por movimento reduzido (prefers-reduced-motion)
-   * Usa block: 'nearest' para não deslocar a página verticalmente
-   */
-  function scrollTabIntoView(tabBtn) {
-    if (!tabBtn) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    tabBtn.scrollIntoView({
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
-      inline: 'center',
-      block: 'nearest'
-    });
-  }
-
-  /**
-   * Atualiza as dicas visuais de gradiente nas bordas esquerda e direita
-   * O gradiente da esquerda só aparece depois que o usuário rolar (> 2px)
-   * O da direita some quando chegar ao fim da fileira
-   */
-  function updateTabScrollGradients() {
-    const tabsWrapper = document.querySelector('.menu-tabs-wrapper');
-    const tabsContainer = document.querySelector('.menu-tabs');
-    if (!tabsWrapper || !tabsContainer) return;
-
-    const scrollLeft = tabsContainer.scrollLeft;
-    const maxScroll = tabsContainer.scrollWidth - tabsContainer.clientWidth;
-
-    if (scrollLeft > 2) {
-      tabsWrapper.classList.add('has-scroll-left');
-    } else {
-      tabsWrapper.classList.remove('has-scroll-left');
-    }
-
-    if (maxScroll > 2 && scrollLeft < maxScroll - 2) {
-      tabsWrapper.classList.add('has-scroll-right');
-    } else {
-      tabsWrapper.classList.remove('has-scroll-right');
-    }
-  }
-
-  /**
-   * Ativa a aba selecionada, atualiza acessibilidade (ARIA/tabindex),
-   * filtra o cardápio, centraliza a aba ativa e atualiza os gradientes
+   * Ativa a aba selecionada no PC (filtrando) ou navega até a seção no celular
    */
   function activateCategoryTab(tabBtn) {
     if (!tabBtn) return;
     const cat = tabBtn.getAttribute('data-category');
+
+    // No celular (< 768px), o cardápio é contínuo: rola até a seção desejada
+    if (window.innerWidth < BREAKPOINT_DESKTOP) {
+      scrollToCategorySection(cat);
+      return;
+    }
+
+    // No PC e Tablet (>= 768px): comportamento original inalterado de abas que filtram o cardápio
     if (cat === 'ofertas') {
       const target = $('mobileOfferBanner') || $('ofertas');
       if (target) {
@@ -2788,12 +2967,27 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Tocar numa categoria durante a busca limpa a busca e aplica a categoria
+    if (state.searchQuery !== '') {
+      const input = $('menuSearchInput');
+      const clearBtn = $('menuSearchClear');
+      clearTimeout(searchDebounceTimer);
+      if (input) input.value = '';
+      if (clearBtn) clearBtn.hidden = true;
+      state.searchQuery = '';
+    }
+
     const tabs = document.querySelectorAll('.menu-tab-btn');
     tabs.forEach(btn => {
       const isActive = (btn === tabBtn);
       btn.classList.toggle('active', isActive);
       btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
       btn.setAttribute('tabindex', isActive ? '0' : '-1');
+      if (isActive) {
+        btn.setAttribute('aria-current', 'true');
+      } else {
+        btn.removeAttribute('aria-current');
+      }
     });
 
     state.currentCategory = cat;
@@ -2804,8 +2998,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Inicializa delegação de cliques, navegação por teclado (Tab, setas, Home, End),
-   * gradientes de rolagem e fixação sticky no celular (< 768px)
+   * Inicializa delegação de cliques, navegação por teclado (Tab, setas, Home, End)
+   * e gradientes de rolagem nas abas
    */
   function initMenuTabs() {
     const tabsWrapper = document.querySelector('.menu-tabs-wrapper') || document.querySelector('.menu-tabs');
@@ -2849,35 +3043,11 @@ document.addEventListener('DOMContentLoaded', () => {
     tabsContainer.addEventListener('scroll', updateTabScrollGradients, { passive: true });
     window.addEventListener('resize', updateTabScrollGradients, { passive: true });
 
-    // Abas fixas (sticky) ao rolar no celular (< 768px): detecta quando gruda para aplicar sombra.
-    // No celular quem gruda é a barra de filtros (abas + tamanhos), por isso a sombra vai nela também.
-    const updateStickyState = () => {
-      const wrapper = document.querySelector('.menu-tabs-wrapper');
-      if (!wrapper) return;
-      const filtersBar = $('menuFiltersBar');
-
-      if (window.innerWidth >= 768) {
-        wrapper.classList.remove('is-stuck');
-        filtersBar?.classList.remove('is-stuck');
-        return;
-      }
-
-      const header = document.querySelector('.site-header') || document.querySelector('header');
-      const headerHeight = header ? header.offsetHeight : 68;
-      const rect = wrapper.getBoundingClientRect();
-
-      // Topo do wrapper alinhado à base do header com tolerância de 1px
-      const isStuck = rect.top <= headerHeight + 1;
-      wrapper.classList.toggle('is-stuck', isStuck);
-      filtersBar?.classList.toggle('is-stuck', isStuck);
-    };
-
-    window.addEventListener('scroll', updateStickyState, { passive: true });
-    window.addEventListener('resize', updateStickyState, { passive: true });
+    // Inicializa observador sticky da barra de categorias no celular via IntersectionObserver
+    initStickyFiltersObserver();
 
     // Estado inicial
     updateTabScrollGradients();
-    updateStickyState();
   }
 
   initMenuTabs();

@@ -137,30 +137,33 @@
     <div class="container header-inner">
       <!-- [SUBSTITUIR PELO ARQUIVO OFICIAL DO LOGO]: Caso envie o PNG/SVG oficial, substitua o conteúdo desta tag <a> -->
       <a href="#inicio" class="brand-logo" aria-label="Montese pizzaria - Início">
-        <!-- Logo Circular Oficial em SVG Inline -->
-        <svg class="brand-logo-circle" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <clipPath id="headerCircleClip">
-              <circle cx="50" cy="50" r="48" />
-            </clipPath>
-          </defs>
-          <g clip-path="url(#headerCircleClip)">
-            <circle cx="50" cy="50" r="48" fill="#FAF8F3" />
-            <rect x="0" y="66" width="36" height="34" fill="#008C45" />
-            <rect x="36" y="66" width="28" height="34" fill="#FAF8F3" />
-            <rect x="64" y="66" width="36" height="34" fill="#E10A17" />
-            <text x="50" y="47" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif" font-size="16"
-              font-weight="700" fill="#2B3537" letter-spacing="0.5">MONTESE</text>
-            <text x="45" y="57" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="5.5"
-              fill="#2B3537" letter-spacing="2.5">pizzaria</text>
-            <!-- Mini Bandeiras Brasil e Itália no Círculo -->
-            <rect x="69" y="53" width="5" height="3.5" fill="#008C45" />
-            <polygon points="71.5,53.4 73.5,54.75 71.5,56.1 69.5,54.75" fill="#FFDF00" />
-            <rect x="75" y="53" width="1.6" height="3.5" fill="#008C45" />
-            <rect x="76.6" y="53" width="1.6" height="3.5" fill="#FAF8F3" />
-            <rect x="78.2" y="53" width="1.6" height="3.5" fill="#E10A17" />
-          </g>
-        </svg>
+        <!-- Logo Circular Oficial em SVG Inline com indicador de status -->
+        <div class="brand-logo-media">
+          <svg class="brand-logo-circle" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <clipPath id="headerCircleClip">
+                <circle cx="50" cy="50" r="48" />
+              </clipPath>
+            </defs>
+            <g clip-path="url(#headerCircleClip)">
+              <circle cx="50" cy="50" r="48" fill="#FAF8F3" />
+              <rect x="0" y="66" width="36" height="34" fill="#008C45" />
+              <rect x="36" y="66" width="28" height="34" fill="#FAF8F3" />
+              <rect x="64" y="66" width="36" height="34" fill="#E10A17" />
+              <text x="50" y="47" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif" font-size="16"
+                font-weight="700" fill="#2B3537" letter-spacing="0.5">MONTESE</text>
+              <text x="45" y="57" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="5.5"
+                fill="#2B3537" letter-spacing="2.5">pizzaria</text>
+              <!-- Mini Bandeiras Brasil e Itália no Círculo -->
+              <rect x="69" y="53" width="5" height="3.5" fill="#008C45" />
+              <polygon points="71.5,53.4 73.5,54.75 71.5,56.1 69.5,54.75" fill="#FFDF00" />
+              <rect x="75" y="53" width="1.6" height="3.5" fill="#008C45" />
+              <rect x="76.6" y="53" width="1.6" height="3.5" fill="#FAF8F3" />
+              <rect x="78.2" y="53" width="1.6" height="3.5" fill="#E10A17" />
+            </g>
+          </svg>
+          <span class="header-status-dot" id="headerStatusDot" role="status" aria-label="Verificando horário..."></span>
+        </div>
 
         <!-- Wordmark Versão Clara (Para Fundo Escuro) -->
         <div class="brand-wordmark">
@@ -232,7 +235,6 @@
     <nav class="mobile-nav" id="mobileNav" aria-label="Menu mobile">
       <ul class="mobile-nav-list">
         <li><a href="#diferenciais" class="mobile-nav-link">A Experiência</a></li>
-        <li><a href="#ofertas" class="mobile-nav-link">Ofertas e Combos</a></li>
         <li><a href="#cardapio" class="mobile-nav-link">Cardápio Completo</a></li>
         <li><a href="#sobre" class="mobile-nav-link">Nossa História</a></li>
         <li><a href="#avaliacoes" class="mobile-nav-link">Avaliações</a></li>
@@ -280,6 +282,9 @@
           <!-- Pontinhos indicadores DENTRO do banner (centralizados embaixo) -->
           <div class="mobile-banner-dots" id="mobileBannerDots" role="tablist" aria-label="Indicadores do banner"></div>
         </div>
+
+        <!-- Card do Combo Família logo abaixo do banner (Somente Celular) -->
+        <div class="mobile-offer-banner mobile-combo-card" id="mobileOfferBanner" role="region" aria-label="Oferta Combo Família"></div>
 
         <!-- 4. Faixa de Informações com rolagem horizontal (Chips) -->
         <div class="mobile-info-strip" role="region" aria-label="Informações do delivery">
@@ -537,6 +542,9 @@
           <button type="button" id="closeOfferBannerBtn" aria-label="Fechar aviso de oferta">✕</button>
         </div>
 
+        <!-- Sentinela para detecção do estado sticky da barra de categorias no celular -->
+        <div class="menu-filters-sentinel" id="menuFiltersSentinel" aria-hidden="true"></div>
+
         <!-- Barra Fixa de Filtros (Categorias Circulares no Celular, Abas no PC) -->
         <div class="menu-filters-bar" id="menuFiltersBar">
           <!-- Abas de Filtro / Categorias Circulares -->
@@ -600,10 +608,10 @@
               </button>
             </div>
           </div>
-
-          <!-- Seletor Global de Tamanho (Somente Celular) -->
-          <div class="size-bar" id="sizeBar" role="group" aria-label="Tamanho das pizzas no cardápio"></div>
         </div>
+
+        <!-- Seletor Global de Tamanho (Somente Celular - Fica no início da lista) -->
+        <div class="size-bar" id="sizeBar" role="group" aria-label="Tamanho das pizzas no cardápio"></div>
 
         <!-- 5. Seção "Mais pedidas" em carrossel horizontal (Somente Celular) -->
         <div class="mobile-mais-pedidas" id="mobileMaisPedidas" role="region" aria-label="Pizzas mais pedidas da Montese">
@@ -613,9 +621,6 @@
           </div>
           <div class="mobile-mais-pedidas-carousel" id="mobileMaisPedidasCarousel" role="region" aria-roledescription="carrossel" aria-label="Carrossel de pizzas mais pedidas"></div>
         </div>
-
-        <!-- 6. Faixa de Oferta ("Weekend Special" style, Somente Celular) -->
-        <div class="mobile-offer-banner" id="mobileOfferBanner" role="region" aria-label="Oferta especial da Montese"></div>
 
         <!-- Legenda de tamanhos -->
         <div class="menu-size-legend" id="sizeLegend" aria-label="Tamanhos disponíveis das pizzas">
@@ -1170,12 +1175,13 @@
         <span class="mobile-nav-cart-total" id="mobileBottomCartTotal">R$ 0,00</span>
       </button>
 
-      <!-- 4. Ofertas -->
-      <button type="button" class="mobile-nav-item" id="mobileNavOfertas" data-nav-target="ofertas" aria-label="Ver Ofertas">
+      <!-- 4. Buscar -->
+      <button type="button" class="mobile-nav-item" id="mobileNavBuscar" data-nav-target="buscar" aria-label="Buscar no cardápio">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <span>Ofertas</span>
+        <span>Buscar</span>
       </button>
 
       <!-- 5. WhatsApp (Outline 24px) -->

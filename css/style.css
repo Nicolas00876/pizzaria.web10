@@ -86,9 +86,9 @@ body {
   background-color: var(--creme);
   color: var(--grafite);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); /* Espaço para a barra fixa estilo app no celular */
+  padding-bottom: 0;
 }
 
 /* Ocultação de seções e links no celular (< 768px) */
@@ -549,6 +549,55 @@ header.scrolled,
   min-height: 44px;
 }
 
+/* Contêiner do logo para posicionamento de status */
+.brand-logo-media {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Indicador de status no header (< 768px): 10px com anel de 2px no canto inferior direito do círculo */
+.header-status-dot {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .header-status-dot {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+    min-height: 10px;
+    border-radius: 50%;
+    background-color: #8A9499; /* cinza = fechado */
+    box-shadow: 0 0 0 2px #0B1020; /* anel de 2px na cor do fundo do header (marinho) */
+    z-index: 2;
+    pointer-events: none;
+    transition: background-color var(--transicao);
+  }
+
+  .header-status-dot.is-open {
+    background-color: var(--verde, #008C45); /* verde = aberto */
+    box-shadow: 0 0 0 2px #0B1020;
+  }
+
+  .header-status-dot.is-closed {
+    background-color: #8A9499; /* cinza = fechado */
+    box-shadow: 0 0 0 2px #0B1020;
+  }
+}
+
+@media (min-width: 768px) {
+  .header-status-dot {
+    display: none !important;
+  }
+}
+
 .brand-logo-circle {
   width: 40px;
   height: 40px;
@@ -844,16 +893,213 @@ header.scrolled,
   color: rgba(250, 248, 243, 0.65);
 }
 
-/* 3. Banner em Carrossel Mobile (Altura entre 190 e 210px) */
+/* 3. Banner Mobile (Slide único da marca no celular: 135px) */
 .mobile-banner-carousel-wrap {
-  margin: 0 0 var(--ritmo-banner-chips, 10px) 0;
-  height: 200px;
+  margin: 0 0 8px 0;
+  height: 135px;
   position: relative;
   border-radius: var(--raio-m, 14px);
   overflow: hidden;
   border: 1px solid rgba(250, 248, 243, 0.08);
   background: linear-gradient(135deg, #131A33 0%, #0B1020 100%);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 767.98px) {
+  .mobile-banner-carousel-wrap {
+    height: 135px !important;
+    margin: 0 0 8px 0 !important;
+  }
+  .mobile-banner-dots {
+    display: none !important;
+  }
+  .mobile-banner-carousel {
+    overflow-x: hidden !important;
+  }
+  .mobile-banner-slide {
+    padding: 12px 14px !important;
+  }
+  .banner-slide-content {
+    max-width: 60% !important;
+  }
+  .banner-slide-title {
+    font-size: 1.05rem !important;
+    margin: 0 0 8px 0 !important;
+    line-height: 1.18 !important;
+  }
+  .btn-banner-action {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 14px !important;
+    font-size: 12.5px !important;
+  }
+  .banner-slide-media {
+    width: 135px !important;
+    height: 135px !important;
+    right: -30px !important;
+  }
+  .banner-pizza-img {
+    width: 135px !important;
+    height: 135px !important;
+  }
+  .banner-slide-media::before {
+    width: 150px !important;
+    height: 150px !important;
+  }
+  .banner-slide-media::after {
+    width: 110px !important;
+    height: 16px !important;
+  }
+}
+
+/* Card do Combo Família (Oferta Única Mobile, Altura até 150px) */
+.mobile-combo-card {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .mobile-offer-banner.mobile-combo-card,
+  .mobile-combo-card {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important; /* Faixa tricolor ponta a ponta sem recuo */
+    overflow: hidden !important; /* Recorta a faixa tricolor nos cantos arredondados */
+    border-radius: var(--raio-m, 14px) !important;
+    background: #131A33 !important;
+    background-color: var(--azul-superficie, #131A33) !important;
+    border: 1px solid var(--azul-borda, rgba(250, 248, 243, 0.12)) !important;
+    margin: 0 0 10px 0 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+    max-height: 150px !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-combo-card .tricolor-bar {
+    height: 3px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+  }
+
+  .mobile-combo-card-body {
+    padding: 12px 16px 14px 16px !important; /* 12px entre faixa e selo; 16px esquerda/direita/base */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Linha 1: selo COMBO + título Combo Família */
+  .mobile-combo-row-1 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 22px !important;
+  }
+
+  .mobile-combo-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2px 7px !important;
+    border-radius: 4px !important;
+    background-color: var(--vermelho, #E10A17) !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    line-height: 1.2 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-combo-title {
+    font-family: var(--fonte-titulo) !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: var(--creme, #FAF8F3) !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Linha 2: o que está incluso, até 2 linhas com quebra normal e line-clamp: 2 */
+  .mobile-combo-incluso {
+    font-size: 12px !important;
+    color: rgba(250, 248, 243, 0.85) !important;
+    margin: 3px 0 4px 0 !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    word-break: break-word !important;
+  }
+
+  /* Linha 3: preços à esquerda (de/por) e botão à direita, alinhados ao centro */
+  .mobile-combo-row-3 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    margin-top: auto !important;
+  }
+
+  .mobile-combo-prices {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .mobile-combo-price-old {
+    font-size: 12px !important;
+    color: rgba(250, 248, 243, 0.65) !important; /* Creme 65% opacidade: contraste >= 4.5:1 sobre #131A33 */
+    text-decoration: line-through !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-combo-price-cur {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    color: var(--vermelho, #E10A17) !important;
+    line-height: 1 !important;
+  }
+
+  .btn-combo-cta {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 16px !important;
+    border-radius: 999px !important;
+    background-color: var(--vermelho, #E10A17) !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(225, 10, 23, 0.35) !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    text-decoration: none !important;
+    transition: background-color var(--transicao), transform var(--transicao) !important;
+  }
+
+  .btn-combo-cta:active {
+    background-color: var(--vermelho-escuro) !important;
+    transform: scale(0.96) !important;
+  }
 }
 
 /* Pontinhos indicadores DENTRO do banner (centralizados embaixo, a 10px da borda) */
@@ -1084,17 +1330,9 @@ header.scrolled,
   transform: rotate(75deg);
 }
 
-/* 4. Faixa de Informações com rolagem horizontal (Chips) */
+/* 4. Faixa de Informações (Chips) - oculta no celular (display:none mantendo no HTML) */
 .mobile-info-strip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  margin: 0 0 16px 0;
-  padding: 0 2px;
-  height: 36px;
+  display: none !important;
 }
 
 .mobile-info-strip::-webkit-scrollbar {
@@ -1174,123 +1412,325 @@ header.scrolled,
     padding-inline: var(--esp-16, 16px);
   }
 
-  #cardapio {
-    background-color: var(--creme, #FAF8F3);
-    border-radius: 24px 24px 0 0;
-    margin-top: -16px;
-    position: relative;
-    z-index: 10;
-    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.25);
-    padding-top: 16px;
+  .hero {
+    background: #0B1020 !important;
+    background-color: #0B1020 !important;
+    padding: 0 !important;
+    min-height: auto !important;
   }
-}
 
-/* Barra Fixa de Filtros / Categorias Circulares */
-.menu-filters-bar {
-  position: sticky;
-  top: var(--altura-header, 58px);
-  z-index: 70;
-  background-color: var(--creme);
-  margin-inline: calc(-1 * var(--esp-16, 16px));
-  margin-bottom: 16px;
-  padding: 0;
-  border-bottom: 1px solid rgba(43, 38, 35, 0.08);
-}
+  .hero::before {
+    display: none !important;
+  }
 
-.menu-filters-bar .menu-tabs-wrapper {
-  position: relative;
-  background-color: transparent;
-  padding: 0;
-  margin: 0 0 16px 0;
-  box-shadow: none;
-}
+  .mobile-hero-app {
+    padding: 8px 16px 0 !important;
+  }
 
-.menu-tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-inline: var(--esp-16, 16px);
-  padding-block: 4px;
-  gap: 0;
-  justify-content: safe center;
-  align-items: flex-start;
-}
+  .mobile-hero-app .menu-search-wrapper {
+    margin: 0 0 8px 0 !important;
+  }
 
-.menu-tabs::-webkit-scrollbar {
-  display: none;
-}
+  .mobile-hero-app .menu-search-box {
+    height: 40px !important;
+  }
 
-.menu-tab-btn {
-  flex: 1 0 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  box-shadow: none;
-  min-height: auto;
-  cursor: pointer;
-  outline: none;
-  scroll-snap-align: center;
-}
+  /* Folha clara com cantos arredondados de 24px no topo sobrepondo o fundo escuro do hero */
+  #cardapio {
+    background-color: var(--creme, #FAF8F3) !important;
+    border-radius: 24px 24px 0 0 !important;
+    margin-top: -16px !important;
+    position: relative !important;
+    z-index: 10 !important;
+    box-shadow: none !important;
+    padding-top: 14px !important;
+  }
 
-.menu-tab-btn[data-category="todos"] {
-  display: none !important;
-}
+  /* Oculta legenda de tamanhos no celular para priorizar pizzas na 1ª tela */
+  .menu-size-legend {
+    display: none !important;
+  }
 
-.tab-label {
-  display: none !important;
-}
+  /* Altura de referência da barra compacta para scroll-margin */
+  :root {
+    --altura-barra-compacta: 54px;
+  }
 
-.category-icon-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-  border-radius: 50%;
-  background-color: var(--branco, #FAF8F3);
-  border: 1.5px solid var(--borda, rgba(43, 38, 35, 0.12));
-  color: var(--azul-marinho, #0B1020);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease;
-}
+  /* Sentinela de 1px acima da barra de categorias para detecção sticky com IntersectionObserver */
+  .menu-filters-sentinel {
+    height: 1px;
+    margin-bottom: -1px;
+    pointer-events: none;
+    visibility: hidden;
+  }
 
-.category-icon-circle svg {
-  width: 22px;
-  height: 22px;
-}
+  /* Barra de Categorias Mobile (Estado Normal): altura automática, padding vertical 8px */
+  .menu-filters-bar {
+    position: sticky;
+    top: var(--altura-header, 58px);
+    z-index: 80;
+    background-color: var(--creme, #FAF8F3);
+    margin-inline: calc(-1 * var(--esp-16, 16px));
+    padding-inline: var(--esp-16, 16px);
+    margin-bottom: 8px;
+    padding-block: 8px;
+    height: auto;
+    border-bottom: 1px solid rgba(43, 38, 35, 0.08);
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease, padding 0.2s ease;
+  }
 
-.tab-mobile-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--grafite);
-  line-height: 1.2;
-  text-align: center;
-  white-space: nowrap;
-  width: 100%;
-}
+  .menu-filters-bar .menu-tabs-wrapper {
+    margin: 0;
+    padding: 0;
+  }
 
-.menu-tab-btn.active .category-icon-circle {
-  background-color: var(--vermelho, #E10A17);
-  border-color: var(--vermelho, #E10A17);
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(225, 10, 23, 0.35);
-  transform: none;
-}
+  .menu-tabs-wrapper::before,
+  .menu-tabs-wrapper::after {
+    display: none;
+  }
 
-.menu-tab-btn.active .tab-mobile-label {
-  color: var(--vermelho, #E10A17);
-  font-weight: 700;
+  /* Abas no Estado Normal: altura automática, sem corte de overflow */
+  .menu-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 0;
+    gap: 0;
+    overflow: visible;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: stretch;
+    align-items: flex-start;
+    height: auto;
+  }
+
+  /* Botão da Categoria no Estado Normal: coluna, alinhado ao topo, gap de 6px */
+  .menu-tab-btn {
+    position: relative;
+    flex: none;
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Círculo de 58px no Estado Normal (especificação: 56 a 60px) */
+  .category-icon-circle {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    min-height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background-color: var(--branco, #FAF8F3);
+    border: 1.5px solid var(--borda, rgba(43, 38, 35, 0.12));
+    color: var(--azul-marinho, #0B1020);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .category-icon-circle svg {
+    width: 26px;
+    height: 26px;
+    transition: transform 0.2s ease;
+  }
+
+  /* Rótulo de 12px no Estado Normal: em uma linha, centralizado, white-space: nowrap */
+  .tab-mobile-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--grafite);
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    width: 100%;
+    margin: 0;
+    transition: color 0.2s ease;
+  }
+
+  /* Categoria Ativa no Estado Normal */
+  .menu-tab-btn.active .category-icon-circle {
+    background-color: var(--vermelho, #E10A17);
+    border-color: var(--vermelho, #E10A17);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(225, 10, 23, 0.35);
+    transform: none;
+  }
+
+  .menu-tab-btn.active .tab-mobile-label {
+    color: var(--vermelho, #E10A17);
+    font-weight: 700;
+  }
+
+  /* ========================================================================
+     Estado Grudado (Compacto - .is-stuck):
+     Pílulas horizontais com ícone 20px + nome 12px lado a lado (altura 40px),
+     área de toque estendida a 44px, altura total da barra até 56px.
+     ======================================================================== */
+  .menu-filters-bar.is-stuck {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 0;
+    padding-block: 7px;
+  }
+
+  .menu-filters-bar.is-stuck .menu-tabs {
+    gap: 6px;
+    align-items: center;
+    height: auto;
+  }
+
+  .menu-filters-bar.is-stuck .menu-tab-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    border-radius: 999px;
+    padding: 0 6px;
+    background-color: var(--branco, #FAF8F3);
+    border: 1px solid var(--borda, rgba(43, 38, 35, 0.12));
+    color: var(--grafite);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Área de toque estendida a 44px */
+  .menu-filters-bar.is-stuck .menu-tab-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Ícone compacto de 20px no modo pílula */
+  .menu-filters-bar.is-stuck .category-icon-circle {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+  }
+
+  .menu-filters-bar.is-stuck .category-icon-circle svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Nome ao lado do ícone no modo pílula */
+  .menu-filters-bar.is-stuck .tab-mobile-label {
+    font-size: 12px;
+    line-height: 1.1;
+    width: auto;
+    color: inherit;
+  }
+
+  /* Pílula Ativa no modo compacto: fundo vermelho Montese, texto e ícone brancos */
+  .menu-filters-bar.is-stuck .menu-tab-btn.active {
+    background-color: var(--vermelho, #E10A17);
+    border-color: var(--vermelho, #E10A17);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(225, 10, 23, 0.3);
+  }
+
+  .menu-filters-bar.is-stuck .menu-tab-btn.active .category-icon-circle {
+    background: transparent;
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  .menu-filters-bar.is-stuck .menu-tab-btn.active .tab-mobile-label {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  /* Em telas muito estreitas (320px), reduz para 11px mantendo os 4 nomes legíveis em 1 linha */
+  @media (max-width: 359.98px) {
+    .menu-filters-bar.is-stuck .menu-tabs {
+      gap: 3px;
+    }
+    .menu-filters-bar.is-stuck .menu-tab-btn {
+      padding: 0 3px;
+      gap: 2px;
+    }
+    .menu-filters-bar.is-stuck .tab-mobile-label {
+      font-size: 11px;
+    }
+    .menu-filters-bar.is-stuck .category-icon-circle svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .menu-tab-btn--ofertas,
+  .menu-tab-btn[data-category="todos"],
+  .tab-label {
+    display: none !important;
+  }
+
+  /* Cardápio em Lista Contínua no Celular */
+  .menu-continuous-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .menu-category-section {
+    scroll-margin-top: calc(var(--altura-header, 58px) + var(--altura-barra-compacta, 54px) + 8px);
+  }
+
+  .menu-category-header {
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    border-bottom: 1.5px solid rgba(43, 38, 35, 0.07);
+  }
+
+  .menu-category-title {
+    font-family: var(--fonte-titulo);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--grafite);
+    margin: 0;
+    letter-spacing: -0.01em;
+    scroll-margin-top: calc(var(--altura-header, 58px) + var(--altura-barra-compacta, 54px) + 8px);
+  }
+
+  .menu-category-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  /* Padding-bottom no cardápio igual à altura da barra inferior + env(safe-area-inset-bottom) */
+  #cardapio {
+    padding-bottom: calc(var(--bottom-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + 24px) !important;
+  }
 }
 
 /* Seletor Global de Tamanho (Somente Celular) */
@@ -1302,9 +1742,35 @@ header.scrolled,
   margin: 0;
 }
 
-/* 6. Mais Pedidas em Carrossel Horizontal */
+/* 6. Mais Pedidas em Carrossel Horizontal - oculto no celular (mantido no HTML) */
 .mobile-mais-pedidas {
-  margin: 0 0 24px 0;
+  display: none !important;
+}
+
+/* Etiqueta pequena do item no celular para itens em destaque */
+.card-item--compact .card-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.card-item-selo {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--fonte-texto);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  color: #B8000E; /* Vermelho escuro com contraste WCAG AA > 4.5:1 */
+  background-color: var(--vermelho-claro, #FFEBEF);
+  border: 1px solid rgba(225, 10, 23, 0.22);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .mobile-section-header {
@@ -1514,10 +1980,13 @@ header.scrolled,
   }
 
   /* Oculta blocos exclusivos do app delivery no PC/Tablet */
+  .menu-filters-sentinel,
   .mobile-hero-app,
   .mobile-mais-pedidas,
   .mobile-offer-banner,
+  .mobile-combo-card,
   .mobile-bottom-bar,
+  .header-status-dot,
   .category-icon-circle,
   .tab-mobile-label,
   .menu-tab-btn--ofertas {
@@ -5081,6 +5550,12 @@ dialog.size-sheet::backdrop {
   background-color: var(--azul-marinho);
   color: var(--creme);
   padding: 0 0 2rem;
+}
+
+@media (max-width: 767.98px) {
+  .site-footer {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 2rem) !important;
+  }
 }
 
 .footer-inner {
