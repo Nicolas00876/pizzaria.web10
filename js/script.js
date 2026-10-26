@@ -13,6 +13,13 @@ const STORAGE_KEY = 'montese_pizzaria_cart_v2';
 const TOAST_DURATION_MS = 2600;
 const HERO_AUTOPLAY_INTERVAL_MS = 6000; // Tempo em milissegundos para troca automática de pizza no hero (6 segundos)
 
+// Configuração do Pagamento via Pix Estático (QR Code + Copia e Cola)
+// PREENCHER PIX_CHAVE E PIX_NOME_RECEBEDOR PARA ATIVAR O PIX
+const PIX_CHAVE = "44998212660";           // chave Pix da pizzaria (CPF/CNPJ, e-mail, telefone ou aleatória)
+const PIX_NOME_RECEBEDOR = "Rafael Luiz Ribeiro";  // nome do recebedor, até 25 caracteres, sem acentos, em maiúsculas
+const PIX_CIDADE = "PALOTINA";  // até 15 caracteres, sem acentos, em maiúsculas
+const PIX_LIMITE_MINUTOS = 30;  // texto informativo: tempo sugerido para pagar
+
 // Ponto de corte único entre celular (< 768px) e PC/Tablet (>= 768px)
 const BREAKPOINT_DESKTOP = 768;
 
@@ -85,89 +92,89 @@ const CONFIG = {
    ======================================================================== */
 const OFFERS_ITEMS = [
   {
-        id: 'of-combo-familia',
-        titulo: 'Combo Família',
-        descricao: '1 pizza grande (sabor tradicional) + 1 pizza broto doce + refrigerante 2L.',
-        itensInclusos: '1x Pizza Grande Tradicional + 1x Pizza Broto Doce + 1x Refrigerante 2L',
-        precoDe: 89.90, // [EXEMPLO - SUBSTITUIR]
-        precoPor: 79.90, // [EXEMPLO - SUBSTITUIR]
-        badge: 'Combo',
-        diaDaSemana: null,
-        regras: 'Válido todos os dias para delivery, retirada ou salão. Informe os sabores desejados nas observações.',
-        tipo: 'combo'
-      },
-      {
-        id: 'of-combo-casal',
-        titulo: 'Combo Casal',
-        descricao: '1 pizza média (sabor tradicional) + 2 refrigerantes em lata 350ml.',
-        itensInclusos: '1x Pizza Média Tradicional + 2x Refrigerantes Lata 350ml',
-        precoDe: 62.00, // [EXEMPLO - SUBSTITUIR]
-        precoPor: 54.90, // [EXEMPLO - SUBSTITUIR]
-        badge: 'Combo',
-        diaDaSemana: null,
-        regras: 'Válido todos os dias. Informe o sabor da pizza e das latas nas observações do pedido.',
-        tipo: 'combo'
-      },
-      {
-        id: 'of-terca-dobro',
-        titulo: 'Terça em Dobro',
-        descricao: 'Na compra de 1 pizza grande, a segunda pizza grande tradicional sai com 50% de desconto.',
-        precoDe: 136.00, // [EXEMPLO - SUBSTITUIR] Valor ref. 2 Pizzas G
-        precoPor: 102.00, // [EXEMPLO - SUBSTITUIR] Valor ref. com 50% na 2ª
-        destaqueCurto: '50% OFF na 2ª Pizza G',
-        badge: 'Terça',
-        diaDaSemana: 2, // Válido às terças-feiras
-        regras: 'Válido às terças, delivery ou salão. Desconto aplicado automaticamente na pizza grande tradicional de menor valor.',
-        tipo: 'desconto'
-      },
-      {
-        id: 'of-quarta-doce',
-        titulo: 'Quarta Doce',
-        descricao: 'Na compra de qualquer pizza grande, ganhe 1 pizza broto doce de chocolate.',
-        precoDe: 108.00, // [EXEMPLO - SUBSTITUIR] Valor ref. Pizza G + Broto Doce
-        precoPor: 68.00,  // [EXEMPLO - SUBSTITUIR] Valor a partir de 1 Pizza G
-        destaqueCurto: 'Broto Doce Grátis',
-        badge: 'Quarta',
-        diaDaSemana: 3, // Válido às quartas-feiras
-        regras: 'Válido às quartas na compra de qualquer pizza grande (G) avulsa. Brinde adicionado automaticamente no carrinho.',
-        tipo: 'desconto'
-      },
-      {
-        id: 'of-retirada-10',
-        titulo: 'Retirada com 10% OFF',
-        descricao: 'Retirando seu pedido no balcão da Montese, ganhe 10% de desconto no total das pizzas.',
-        precoDe: 72.00, // [EXEMPLO - SUBSTITUIR]
-        precoPor: 64.80, // [EXEMPLO - SUBSTITUIR]
-        destaqueCurto: '10% OFF nas Pizzas',
-        badge: 'Retirada',
-        diaDaSemana: null,
-        regras: 'Válido todos os dias ao selecionar "Retirada" no carrinho. Aplicado sobre as pizzas avulsas do pedido.',
-        tipo: 'desconto'
-      },
-      {
-        id: 'of-frete-gratis',
-        titulo: 'Frete Grátis',
-        descricao: 'Em pedidos para entrega acima de R$ 80,00, a taxa de entrega é zerada automaticamente.',
-        precoDe: 6.00, // [EXEMPLO - SUBSTITUIR]
-        precoPor: 0.00,
-        destaqueCurto: 'Taxa Zero (>R$ 80)',
-        badge: 'Entrega',
-        diaDaSemana: null,
-        regras: 'Válido todos os dias em toda a área urbana de Palotina para pedidos de delivery a partir de R$ 80,00.',
-        tipo: 'frete'
-      },
-      {
-        id: 'of-domingo-familia',
-        titulo: 'Domingo em Família',
-        descricao: '2 pizzas grandes (sabores tradicionais) + 1 refrigerante 2L por preço especial.',
-        itensInclusos: '2x Pizzas Grandes Tradicionais + 1x Refrigerante 2L',
-        precoDe: 151.00, // [EXEMPLO - SUBSTITUIR]
-        precoPor: 99.90,  // [EXEMPLO - SUBSTITUIR]
-        badge: 'Domingo',
-        diaDaSemana: 0, // Válido aos domingos
-        regras: 'Válido aos domingos para delivery, retirada ou salão. Informe os sabores tradicionais nas observações.',
-        tipo: 'combo'
-      }
+    id: 'of-combo-familia',
+    titulo: 'Combo Família',
+    descricao: '1 pizza grande (sabor tradicional) + 1 pizza broto doce + refrigerante 2L.',
+    itensInclusos: '1x Pizza Grande Tradicional + 1x Pizza Broto Doce + 1x Refrigerante 2L',
+    precoDe: 89.90, // [EXEMPLO - SUBSTITUIR]
+    precoPor: 79.90, // [EXEMPLO - SUBSTITUIR]
+    badge: 'Combo',
+    diaDaSemana: null,
+    regras: 'Válido todos os dias para delivery, retirada ou salão. Informe os sabores desejados nas observações.',
+    tipo: 'combo'
+  },
+  {
+    id: 'of-combo-casal',
+    titulo: 'Combo Casal',
+    descricao: '1 pizza média (sabor tradicional) + 2 refrigerantes em lata 350ml.',
+    itensInclusos: '1x Pizza Média Tradicional + 2x Refrigerantes Lata 350ml',
+    precoDe: 62.00, // [EXEMPLO - SUBSTITUIR]
+    precoPor: 54.90, // [EXEMPLO - SUBSTITUIR]
+    badge: 'Combo',
+    diaDaSemana: null,
+    regras: 'Válido todos os dias. Informe o sabor da pizza e das latas nas observações do pedido.',
+    tipo: 'combo'
+  },
+  {
+    id: 'of-terca-dobro',
+    titulo: 'Terça em Dobro',
+    descricao: 'Na compra de 1 pizza grande, a segunda pizza grande tradicional sai com 50% de desconto.',
+    precoDe: 136.00, // [EXEMPLO - SUBSTITUIR] Valor ref. 2 Pizzas G
+    precoPor: 102.00, // [EXEMPLO - SUBSTITUIR] Valor ref. com 50% na 2ª
+    destaqueCurto: '50% OFF na 2ª Pizza G',
+    badge: 'Terça',
+    diaDaSemana: 2, // Válido às terças-feiras
+    regras: 'Válido às terças, delivery ou salão. Desconto aplicado automaticamente na pizza grande tradicional de menor valor.',
+    tipo: 'desconto'
+  },
+  {
+    id: 'of-quarta-doce',
+    titulo: 'Quarta Doce',
+    descricao: 'Na compra de qualquer pizza grande, ganhe 1 pizza broto doce de chocolate.',
+    precoDe: 108.00, // [EXEMPLO - SUBSTITUIR] Valor ref. Pizza G + Broto Doce
+    precoPor: 68.00,  // [EXEMPLO - SUBSTITUIR] Valor a partir de 1 Pizza G
+    destaqueCurto: 'Broto Doce Grátis',
+    badge: 'Quarta',
+    diaDaSemana: 3, // Válido às quartas-feiras
+    regras: 'Válido às quartas na compra de qualquer pizza grande (G) avulsa. Brinde adicionado automaticamente no carrinho.',
+    tipo: 'desconto'
+  },
+  {
+    id: 'of-retirada-10',
+    titulo: 'Retirada com 10% OFF',
+    descricao: 'Retirando seu pedido no balcão da Montese, ganhe 10% de desconto no total das pizzas.',
+    precoDe: 72.00, // [EXEMPLO - SUBSTITUIR]
+    precoPor: 64.80, // [EXEMPLO - SUBSTITUIR]
+    destaqueCurto: '10% OFF nas Pizzas',
+    badge: 'Retirada',
+    diaDaSemana: null,
+    regras: 'Válido todos os dias ao selecionar "Retirada" no carrinho. Aplicado sobre as pizzas avulsas do pedido.',
+    tipo: 'desconto'
+  },
+  {
+    id: 'of-frete-gratis',
+    titulo: 'Frete Grátis',
+    descricao: 'Em pedidos para entrega acima de R$ 80,00, a taxa de entrega é zerada automaticamente.',
+    precoDe: 6.00, // [EXEMPLO - SUBSTITUIR]
+    precoPor: 0.00,
+    destaqueCurto: 'Taxa Zero (>R$ 80)',
+    badge: 'Entrega',
+    diaDaSemana: null,
+    regras: 'Válido todos os dias em toda a área urbana de Palotina para pedidos de delivery a partir de R$ 80,00.',
+    tipo: 'frete'
+  },
+  {
+    id: 'of-domingo-familia',
+    titulo: 'Domingo em Família',
+    descricao: '2 pizzas grandes (sabores tradicionais) + 1 refrigerante 2L por preço especial.',
+    itensInclusos: '2x Pizzas Grandes Tradicionais + 1x Refrigerante 2L',
+    precoDe: 151.00, // [EXEMPLO - SUBSTITUIR]
+    precoPor: 99.90,  // [EXEMPLO - SUBSTITUIR]
+    badge: 'Domingo',
+    diaDaSemana: 0, // Válido aos domingos
+    regras: 'Válido aos domingos para delivery, retirada ou salão. Informe os sabores tradicionais nas observações.',
+    tipo: 'combo'
+  }
 ];
 
 /* ========================================================================
@@ -177,227 +184,227 @@ const OFFERS_ITEMS = [
    ======================================================================== */
 const MENU_ITEMS = [
   // --- PIZZAS TRADICIONAIS (7) ---
-      {
-        id: 'pz-calabresa',
-        category: 'tradicionais',
-        destaque: true,
-        selo: 'Mais Pedida',
-        destaqueHero: true,
-        name: 'Calabresa Artesanal',
-        description: 'Molho de tomate artesanal, muçarela derretida, calabresa fatiada defumada, cebola roxa em anéis, azeitonas pretas e orégano.',
-        badge: 'Mais Pedida',
-        image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 42.00, M: 56.00, G: 68.00, GG: 82.00 }
-      },
-      {
-        id: 'pz-frango-catupiry',
-        category: 'tradicionais',
-        destaque: true,
-        selo: 'Clássica',
-        destaqueHero: true,
-        name: 'Frango com Catupiry',
-        description: 'Molho artesanal, muçarela, peito de frango desfiado e temperado na cozinha da Montese, coberto com generosa camada de Catupiry legítimo e orégano.',
-        badge: 'Clássica',
-        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 44.00, M: 58.00, G: 72.00, GG: 86.00 }
-      },
-      {
-        id: 'pz-portuguesa',
-        category: 'tradicionais',
-        name: 'Portuguesa Clássica',
-        description: 'Molho artesanal, muçarela, presunto magro, ovos cozidos, cebola, ervilhas frescas, palmito macio, azeitonas pretas e orégano.',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 44.00, M: 58.00, G: 72.00, GG: 86.00 }
-      },
-      {
-        id: 'pz-marguerita',
-        category: 'tradicionais',
-        destaque: true,
-        selo: 'Vegetariana',
-        destaqueHero: true,
-        name: 'Marguerita Verace',
-        description: 'Molho de tomates selecionados, muçarela, rodelas de tomate fresco, lascas de parmesão e folhas de manjericão colhidas na hora.',
-        badge: 'Vegetariana',
-        image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 40.00, M: 54.00, G: 66.00, GG: 79.00 }
-      },
-      {
-        id: 'pz-quatro-queijos',
-        category: 'tradicionais',
+  {
+    id: 'pz-calabresa',
+    category: 'tradicionais',
+    destaque: true,
+    selo: 'Mais Pedida',
     destaqueHero: true,
-        name: 'Quatro Queijos',
-        description: 'Molho artesanal, combinação cremosa de muçarela, Catupiry legítimo, provolone defumado, toque suave de gorgonzola e orégano.',
-        badge: 'Vegetariana',
-        image: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 45.00, M: 60.00, G: 74.00, GG: 88.00 }
-      },
-      {
-        id: 'pz-milho-bacon',
-        category: 'tradicionais',
-        name: 'Milho Cremoso com Bacon',
-        description: 'Molho artesanal, muçarela, milho verde doce, cubos de bacon crocante dourados no forno e fios de Catupiry.',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 43.00, M: 57.00, G: 70.00, GG: 84.00 }
-      },
-      {
-        id: 'pz-napolitana',
-        category: 'tradicionais',
-        name: 'Napolitana com Alho Dourado',
-        description: 'Molho de tomate artesanal, muçarela, tomates em rodelas, parmesão gratinado, alho frito crocante na medida certa e orégano.',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 40.00, M: 54.00, G: 66.00, GG: 79.00 }
-      },
-
-      // --- PIZZAS ESPECIAIS DA CASA (5) ---
-      {
-        id: 'pz-montese-especial',
-        category: 'especiais',
-        destaque: true,
-        selo: 'Assinatura',
-        name: 'Montese Especial',
-        description: 'Nossa assinatura: molho artesanal, muçarela, lombo canadense, bacon em cubos, palmito selecionado, Catupiry legítimo e manjericão.',
-        badge: 'Assinatura Montese',
-        image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 48.00, M: 64.00, G: 78.00, GG: 92.00 }
-      },
-      {
-        id: 'pz-costela',
-        category: 'especiais',
-        destaque: true,
-        selo: 'Sucesso',
-        name: 'Costela Desfiada & Cebola',
-        description: 'Molho artesanal, muçarela, costela bovina assada lentamente e desfiada, cebola caramelizada, requeijão cremoso e salsinha fresca.',
-        badge: 'Sucesso',
-        image: 'https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 50.00, M: 66.00, G: 82.00, GG: 96.00 }
-      },
-      {
-        id: 'pz-palotina-suprema',
-        category: 'especiais',
-        name: 'Palotina Suprema',
-        description: 'Homenagem à nossa terra: frango desfiado, calabresa defumada, bacon crocante, milho verde, muçarela e cobertura de Catupiry.',
-        badge: 'Bem Recheada',
-        image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 48.00, M: 64.00, G: 78.00, GG: 92.00 }
-      },
-      {
-        id: 'pz-parma-rucula',
-        category: 'especiais',
-        name: 'Rúcula, Tomate Seco & Búfala',
-        description: 'Molho artesanal, muçarela, folhas de rúcula fresca, tomate seco selecionado, lascas de muçarela de búfala e fio de azeite.',
-        badge: 'Leve & Gourmet',
-        image: 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 49.00, M: 65.00, G: 80.00, GG: 94.00 }
-      },
-      {
-        id: 'pz-pepperoni-hot',
-        category: 'especiais',
+    name: 'Calabresa Artesanal',
+    description: 'Molho de tomate artesanal, muçarela derretida, calabresa fatiada defumada, cebola roxa em anéis, azeitonas pretas e orégano.',
+    badge: 'Mais Pedida',
+    image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 42.00, M: 56.00, G: 68.00, GG: 82.00 }
+  },
+  {
+    id: 'pz-frango-catupiry',
+    category: 'tradicionais',
+    destaque: true,
+    selo: 'Clássica',
     destaqueHero: true,
-        name: 'Pepperoni com Cream Cheese',
-        description: 'Molho de tomate artesanal, camada dupla de muçarela, fatias generosas de pepperoni importado e medalhões de cream cheese.',
-        badge: 'Especial',
-        image: 'https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 49.00, M: 65.00, G: 79.00, GG: 93.00 }
-      },
+    name: 'Frango com Catupiry',
+    description: 'Molho artesanal, muçarela, peito de frango desfiado e temperado na cozinha da Montese, coberto com generosa camada de Catupiry legítimo e orégano.',
+    badge: 'Clássica',
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 44.00, M: 58.00, G: 72.00, GG: 86.00 }
+  },
+  {
+    id: 'pz-portuguesa',
+    category: 'tradicionais',
+    name: 'Portuguesa Clássica',
+    description: 'Molho artesanal, muçarela, presunto magro, ovos cozidos, cebola, ervilhas frescas, palmito macio, azeitonas pretas e orégano.',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 44.00, M: 58.00, G: 72.00, GG: 86.00 }
+  },
+  {
+    id: 'pz-marguerita',
+    category: 'tradicionais',
+    destaque: true,
+    selo: 'Vegetariana',
+    destaqueHero: true,
+    name: 'Marguerita Verace',
+    description: 'Molho de tomates selecionados, muçarela, rodelas de tomate fresco, lascas de parmesão e folhas de manjericão colhidas na hora.',
+    badge: 'Vegetariana',
+    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 40.00, M: 54.00, G: 66.00, GG: 79.00 }
+  },
+  {
+    id: 'pz-quatro-queijos',
+    category: 'tradicionais',
+    destaqueHero: true,
+    name: 'Quatro Queijos',
+    description: 'Molho artesanal, combinação cremosa de muçarela, Catupiry legítimo, provolone defumado, toque suave de gorgonzola e orégano.',
+    badge: 'Vegetariana',
+    image: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 45.00, M: 60.00, G: 74.00, GG: 88.00 }
+  },
+  {
+    id: 'pz-milho-bacon',
+    category: 'tradicionais',
+    name: 'Milho Cremoso com Bacon',
+    description: 'Molho artesanal, muçarela, milho verde doce, cubos de bacon crocante dourados no forno e fios de Catupiry.',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 43.00, M: 57.00, G: 70.00, GG: 84.00 }
+  },
+  {
+    id: 'pz-napolitana',
+    category: 'tradicionais',
+    name: 'Napolitana com Alho Dourado',
+    description: 'Molho de tomate artesanal, muçarela, tomates em rodelas, parmesão gratinado, alho frito crocante na medida certa e orégano.',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 40.00, M: 54.00, G: 66.00, GG: 79.00 }
+  },
 
-      // --- PIZZAS DOCES (4) ---
-      {
-        id: 'pz-morango-nutella',
-        category: 'doces',
-        destaque: true,
-        selo: 'Mais Pedida',
-        name: 'Sensação de Morango & Avelã',
-        description: 'Base crocante com creme de leite, chocolate ao leite nobre derretido, morangos frescos fatiados e fios de creme de avelã.',
-        badge: 'Favorita Doce',
-        image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 44.00, M: 58.00, G: 70.00, GG: 84.00 }
-      },
-      {
-        id: 'pz-banana-nevada',
-        category: 'doces',
-        name: 'Banana Nevada Gratinada',
-        description: 'Muçarela levemente salgada, bananas maduras fatiadas, açúcar com canela caramelizado no forno e cobertura de chocolate branco.',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 40.00, M: 52.00, G: 64.00, GG: 76.00 }
-      },
-      {
-        id: 'pz-prestigio',
-        category: 'doces',
-        name: 'Prestígio Artesanal',
-        description: 'Creme de chocolate ao leite derretido, coco ralado úmido em flocos, leite condensado e cerejas selecionadas.',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 42.00, M: 55.00, G: 67.00, GG: 80.00 }
-      },
-      {
-        id: 'pz-romeu-julieta',
-        category: 'doces',
-        name: 'Romeu e Julieta Cremoso',
-        description: 'Combinação clássica de muçarela, Catupiry legítimo e goiabada cascão derretida.',
-        badge: 'Tradição',
-        image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80',
-        prices: { P: 40.00, M: 52.00, G: 64.00, GG: 76.00 }
-      },
+  // --- PIZZAS ESPECIAIS DA CASA (5) ---
+  {
+    id: 'pz-montese-especial',
+    category: 'especiais',
+    destaque: true,
+    selo: 'Assinatura',
+    name: 'Montese Especial',
+    description: 'Nossa assinatura: molho artesanal, muçarela, lombo canadense, bacon em cubos, palmito selecionado, Catupiry legítimo e manjericão.',
+    badge: 'Assinatura Montese',
+    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 48.00, M: 64.00, G: 78.00, GG: 92.00 }
+  },
+  {
+    id: 'pz-costela',
+    category: 'especiais',
+    destaque: true,
+    selo: 'Sucesso',
+    name: 'Costela Desfiada & Cebola',
+    description: 'Molho artesanal, muçarela, costela bovina assada lentamente e desfiada, cebola caramelizada, requeijão cremoso e salsinha fresca.',
+    badge: 'Sucesso',
+    image: 'https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 50.00, M: 66.00, G: 82.00, GG: 96.00 }
+  },
+  {
+    id: 'pz-palotina-suprema',
+    category: 'especiais',
+    name: 'Palotina Suprema',
+    description: 'Homenagem à nossa terra: frango desfiado, calabresa defumada, bacon crocante, milho verde, muçarela e cobertura de Catupiry.',
+    badge: 'Bem Recheada',
+    image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 48.00, M: 64.00, G: 78.00, GG: 92.00 }
+  },
+  {
+    id: 'pz-parma-rucula',
+    category: 'especiais',
+    name: 'Rúcula, Tomate Seco & Búfala',
+    description: 'Molho artesanal, muçarela, folhas de rúcula fresca, tomate seco selecionado, lascas de muçarela de búfala e fio de azeite.',
+    badge: 'Leve & Gourmet',
+    image: 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 49.00, M: 65.00, G: 80.00, GG: 94.00 }
+  },
+  {
+    id: 'pz-pepperoni-hot',
+    category: 'especiais',
+    destaqueHero: true,
+    name: 'Pepperoni com Cream Cheese',
+    description: 'Molho de tomate artesanal, camada dupla de muçarela, fatias generosas de pepperoni importado e medalhões de cream cheese.',
+    badge: 'Especial',
+    image: 'https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 49.00, M: 65.00, G: 79.00, GG: 93.00 }
+  },
 
-      // --- BEBIDAS (6) ---
-      {
-        id: 'beb-coca-2l',
-        category: 'bebidas',
-        name: 'Coca-Cola 2 Litros',
-        description: 'Garrafa de 2 litros bem gelada (Tradicional ou Sem Açúcar - informe nas observações).',
-        badge: 'Gelada',
-        image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',
-        price: 15.00
-      },
-      {
-        id: 'beb-guarana-2l',
-        category: 'bebidas',
-        name: 'Guaraná Antarctica 2 Litros',
-        description: 'Garrafa de 2 litros bem gelada, ideal para acompanhar a pizza em família.',
-        badge: 'Gelada',
-        image: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?auto=format&fit=crop&w=600&q=80',
-        price: 14.00
-      },
-      {
-        id: 'beb-coca-lata',
-        category: 'bebidas',
-        name: 'Coca-Cola Lata 350ml',
-        description: 'Lata 350ml trincando de gelada (Tradicional ou Zero).',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=600&q=80',
-        price: 6.50
-      },
-      {
-        id: 'beb-suco-laranja',
-        category: 'bebidas',
-        name: 'Suco Natural de Laranja 1L',
-        description: 'Jarra/Garrafa de 1 litro de suco 100% natural, espremido no dia e sem conservantes.',
-        badge: '100% Natural',
-        image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80',
-        price: 18.00
-      },
-      {
-        id: 'beb-heineken',
-        category: 'bebidas',
-        name: 'Cerveja Heineken Long Neck 330ml',
-        description: 'Long neck 330ml super gelada (Venda proibida para menores de 18 anos).',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=80',
-        price: 11.00
-      },
-      {
-        id: 'beb-agua',
-        category: 'bebidas',
-        name: 'Água Mineral 500ml',
-        description: 'Garrafa de 500ml (Com gás ou sem gás).',
-        badge: '',
-        image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80',
-        price: 4.50
-      }
+  // --- PIZZAS DOCES (4) ---
+  {
+    id: 'pz-morango-nutella',
+    category: 'doces',
+    destaque: true,
+    selo: 'Mais Pedida',
+    name: 'Sensação de Morango & Avelã',
+    description: 'Base crocante com creme de leite, chocolate ao leite nobre derretido, morangos frescos fatiados e fios de creme de avelã.',
+    badge: 'Favorita Doce',
+    image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 44.00, M: 58.00, G: 70.00, GG: 84.00 }
+  },
+  {
+    id: 'pz-banana-nevada',
+    category: 'doces',
+    name: 'Banana Nevada Gratinada',
+    description: 'Muçarela levemente salgada, bananas maduras fatiadas, açúcar com canela caramelizado no forno e cobertura de chocolate branco.',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 40.00, M: 52.00, G: 64.00, GG: 76.00 }
+  },
+  {
+    id: 'pz-prestigio',
+    category: 'doces',
+    name: 'Prestígio Artesanal',
+    description: 'Creme de chocolate ao leite derretido, coco ralado úmido em flocos, leite condensado e cerejas selecionadas.',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 42.00, M: 55.00, G: 67.00, GG: 80.00 }
+  },
+  {
+    id: 'pz-romeu-julieta',
+    category: 'doces',
+    name: 'Romeu e Julieta Cremoso',
+    description: 'Combinação clássica de muçarela, Catupiry legítimo e goiabada cascão derretida.',
+    badge: 'Tradição',
+    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80',
+    prices: { P: 40.00, M: 52.00, G: 64.00, GG: 76.00 }
+  },
+
+  // --- BEBIDAS (6) ---
+  {
+    id: 'beb-coca-2l',
+    category: 'bebidas',
+    name: 'Coca-Cola 2 Litros',
+    description: 'Garrafa de 2 litros bem gelada (Tradicional ou Sem Açúcar - informe nas observações).',
+    badge: 'Gelada',
+    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',
+    price: 15.00
+  },
+  {
+    id: 'beb-guarana-2l',
+    category: 'bebidas',
+    name: 'Guaraná Antarctica 2 Litros',
+    description: 'Garrafa de 2 litros bem gelada, ideal para acompanhar a pizza em família.',
+    badge: 'Gelada',
+    image: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?auto=format&fit=crop&w=600&q=80',
+    price: 14.00
+  },
+  {
+    id: 'beb-coca-lata',
+    category: 'bebidas',
+    name: 'Coca-Cola Lata 350ml',
+    description: 'Lata 350ml trincando de gelada (Tradicional ou Zero).',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=600&q=80',
+    price: 6.50
+  },
+  {
+    id: 'beb-suco-laranja',
+    category: 'bebidas',
+    name: 'Suco Natural de Laranja 1L',
+    description: 'Jarra/Garrafa de 1 litro de suco 100% natural, espremido no dia e sem conservantes.',
+    badge: '100% Natural',
+    image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80',
+    price: 18.00
+  },
+  {
+    id: 'beb-heineken',
+    category: 'bebidas',
+    name: 'Cerveja Heineken Long Neck 330ml',
+    description: 'Long neck 330ml super gelada (Venda proibida para menores de 18 anos).',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=80',
+    price: 11.00
+  },
+  {
+    id: 'beb-agua',
+    category: 'bebidas',
+    name: 'Água Mineral 500ml',
+    description: 'Garrafa de 500ml (Com gás ou sem gás).',
+    badge: '',
+    image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80',
+    price: 4.50
+  }
 ];
 
 /* ========================================================================
@@ -832,11 +839,11 @@ function renderContinuousMenuHTML() {
   return `
     <div class="menu-continuous-list">
       ${MENU_SECTIONS.map(section => {
-        const sectionItems = MENU_ITEMS.filter(item => item.category === section.id);
-        // Itens com selo ou destaque continuam aparecendo primeiro dentro da seção
-        sectionItems.sort((a, b) => ((b.destaque || b.selo) ? 1 : 0) - ((a.destaque || a.selo) ? 1 : 0));
+    const sectionItems = MENU_ITEMS.filter(item => item.category === section.id);
+    // Itens com selo ou destaque continuam aparecendo primeiro dentro da seção
+    sectionItems.sort((a, b) => ((b.destaque || b.selo) ? 1 : 0) - ((a.destaque || a.selo) ? 1 : 0));
 
-        return `
+    return `
           <section class="menu-category-section" id="categoria-${section.id}" data-category="${section.id}">
             <div class="menu-category-header">
               <h3 class="menu-category-title">${section.name}</h3>
@@ -846,7 +853,7 @@ function renderContinuousMenuHTML() {
             </div>
           </section>
         `;
-      }).join('')}
+  }).join('')}
     </div>
   `;
 }
@@ -1851,6 +1858,11 @@ function updateCartUI() {
   // Mantém os contadores "− 1 +" da lista do cardápio iguais ao carrinho real (inclusive ao remover pelo drawer)
   syncMenuQuantityControls();
 
+  // Se o carrinho mudar enquanto a tela de pagamento Pix estiver aberta, fecha para evitar valor desatualizado
+  if (typeof isPixModalOpen === 'function' && isPixModalOpen()) {
+    closePixModal();
+  }
+
   // Atualiza barra inferior no celular (< 768px)
   const mobileBadge = $('mobileBottomCartBadge') || $('mobileBottomCartCount');
   const mobileTotal = $('mobileBottomCartTotal');
@@ -1862,6 +1874,7 @@ function updateCartUI() {
     contentWrapper.style.display = 'none';
     footer.style.display = 'none';
     freeShippingBox.style.display = 'none';
+    if (typeof syncPixAvailability === 'function') syncPixAvailability();
     return;
   }
 
@@ -1947,6 +1960,7 @@ function updateCartUI() {
   }
 
   $('summaryTotal').textContent = formatBRL(summary.finalTotal);
+  if (typeof syncPixAvailability === 'function') syncPixAvailability();
 }
 
 /* ========================================================================
@@ -2183,10 +2197,18 @@ function buildWhatsAppOrderMessage(clientData, summary) {
 
   lines.push(`Taxa de Entrega: ${deliveryText}`);
   lines.push(`💰 *TOTAL A PAGAR: ${formatBRL(summary.finalTotal)}*`);
-  lines.push(`💳 *Pagamento:* ${clientData.payment}`);
 
-  if (clientData.payment === 'Dinheiro' && clientData.change) {
-    lines.push(`💵 *Troco para:* ${clientData.change}`);
+  if (clientData.payment === 'PIX' || clientData.payment === 'Pix') {
+    lines.push('💳 *Pagamento:* Pix');
+    if (clientData.orderId) {
+      lines.push(`Pedido: ${clientData.orderId}`);
+    }
+    lines.push('Comprovante: vou enviar nesta conversa');
+  } else {
+    lines.push(`💳 *Pagamento:* ${clientData.payment}`);
+    if (clientData.payment === 'Dinheiro' && clientData.change) {
+      lines.push(`💵 *Troco para:* ${clientData.change}`);
+    }
   }
 
   lines.push(
@@ -2197,7 +2219,300 @@ function buildWhatsAppOrderMessage(clientData, summary) {
   return lines.join('\n');
 }
 
-// Valida os campos do cliente e envia o pedido para o WhatsApp
+/* ========================================================================
+   ===== PAGAMENTO VIA PIX ESTÁTICO (QR CODE + COPIA E COLA) =====
+   ======================================================================== */
+
+// Algoritmo CRC-16/CCITT-FALSE (polinômio 0x1021, valor inicial 0xFFFF)
+// Validado: o CRC de "123456789" resulta rigorosamente em 29B1
+function crc16CcittFalse(str) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= (str.charCodeAt(i) << 8);
+    for (let j = 0; j < 8; j++) {
+      if ((crc & 0x8000) !== 0) {
+        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+      } else {
+        crc = (crc << 1) & 0xFFFF;
+      }
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+// Formatação TLV do padrão EMV (ID com 2 dígitos + Tamanho com 2 dígitos + Valor)
+function formatEMV(id, value) {
+  const len = String(value.length).padStart(2, '0');
+  return `${id}${len}${value}`;
+}
+
+// Remove acentos e caracteres especiais para atender o padrão EMV
+function sanitizePixText(text, maxLen) {
+  return (text || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9 ]/g, '')
+    .trim()
+    .toUpperCase()
+    .slice(0, maxLen);
+}
+
+// Função pura que gera o código BR Code Pix conforme especificação do Banco Central do Brasil
+function gerarPayloadPix({ chave, nome, cidade, valor, identificador }) {
+  const chaveLimpa = (chave || '').trim();
+  const nomeLimpo = sanitizePixText(nome, 25) || 'MONTESE PIZZARIA';
+  const cidadeLimpa = sanitizePixText(cidade, 15) || 'PALOTINA';
+  const idLimpo = (identificador || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 25) || '***';
+  const valorFormatado = Number(valor).toFixed(2);
+
+  // Subcampos da conta do recebedor (campo 26)
+  const sub26_00 = formatEMV('00', 'br.gov.bcb.pix');
+  const sub26_01 = formatEMV('01', chaveLimpa);
+  const campo26 = formatEMV('26', sub26_00 + sub26_01);
+
+  // Subcampo do identificador do pedido (campo 62)
+  const sub62_05 = formatEMV('05', idLimpo);
+  const campo62 = formatEMV('62', sub62_05);
+
+  const payloadSemCRC = [
+    formatEMV('00', '01'),
+    campo26,
+    formatEMV('52', '0000'),
+    formatEMV('53', '986'),
+    formatEMV('54', valorFormatado),
+    formatEMV('58', 'BR'),
+    formatEMV('59', nomeLimpo),
+    formatEMV('60', cidadeLimpa),
+    campo62,
+    '6304'
+  ].join('');
+
+  const crc = crc16CcittFalse(payloadSemCRC);
+  return payloadSemCRC + crc;
+}
+
+// Gera identificador único curto do pedido no formato MON + 5 dígitos
+function generateOrderId() {
+  const digits = Math.floor(10000 + Math.random() * 90000);
+  const id = `MON${digits}`;
+  try {
+    localStorage.setItem('montese_last_order_id', id);
+  } catch (e) {
+    // localStorage indisponível, segue normalmente
+  }
+  return id;
+}
+
+// Renderiza o QR Code SVG na tela com proteção try/catch e fallback
+function renderPixQrCode(payload, totalFormatted) {
+  const wrapper = $('pixQrCodeWrapper');
+  if (!wrapper) return;
+
+  wrapper.innerHTML = '';
+  wrapper.setAttribute('aria-label', `QR Code Pix no valor de ${totalFormatted}`);
+
+  try {
+    if (typeof qrcode === 'function') {
+      const qr = qrcode(0, 'M');
+      qr.addData(payload);
+      qr.make();
+      const svgTag = qr.createSvgTag({
+        cellSize: 6,
+        margin: 4,
+        scalable: true
+      });
+      wrapper.innerHTML = svgTag;
+      return;
+    }
+  } catch (err) {
+    // Falha silenciosa da biblioteca de QR: fallback sem lançar erro no console
+  }
+
+  // Fallback caso a biblioteca não esteja disponível
+  wrapper.innerHTML = `
+    <div class="pix-qr-fallback">
+      <p>Use o botão abaixo para copiar o código Pix e pagar no aplicativo do seu banco.</p>
+    </div>
+  `;
+}
+
+let lastFocusedElementBeforePixModal = null;
+
+// Verifica se a tela de pagamento Pix está aberta no momento
+function isPixModalOpen() {
+  const modal = $('pixModal');
+  return modal && !modal.hidden && modal.classList.contains('open');
+}
+
+// Abre a tela de pagamento Pix
+function openPixPaymentModal() {
+  const summary = calculateOrderSummary();
+  if (summary.finalTotal <= 0) return;
+
+  const orderId = generateOrderId();
+  state.currentOrderId = orderId;
+
+  const payload = gerarPayloadPix({
+    chave: PIX_CHAVE,
+    nome: PIX_NOME_RECEBEDOR,
+    cidade: PIX_CIDADE,
+    valor: summary.finalTotal,
+    identificador: orderId
+  });
+
+  const totalFormatted = formatBRL(summary.finalTotal);
+  const totalEl = $('pixTotalValue');
+  if (totalEl) totalEl.textContent = totalFormatted;
+
+  const codeArea = $('pixCodeText');
+  if (codeArea) codeArea.value = payload;
+
+  const copyBtn = $('pixCopyBtn');
+  if (copyBtn) copyBtn.textContent = 'Copiar código Pix';
+
+  renderPixQrCode(payload, totalFormatted);
+
+  const overlay = $('pixModalOverlay');
+  const modal = $('pixModal');
+  if (overlay && modal) {
+    lastFocusedElementBeforePixModal = document.activeElement;
+    overlay.hidden = false;
+    modal.hidden = false;
+    // Força reflow para transição suave
+    void modal.offsetWidth;
+    overlay.classList.add('open');
+    modal.classList.add('open');
+
+    const closeBtn = $('pixCloseBtn');
+    if (closeBtn) closeBtn.focus();
+  }
+}
+
+// Fecha a tela de pagamento Pix e devolve o foco
+function closePixModal() {
+  const overlay = $('pixModalOverlay');
+  const modal = $('pixModal');
+  if (overlay && modal) {
+    overlay.classList.remove('open');
+    modal.classList.remove('open');
+    setTimeout(() => {
+      overlay.hidden = true;
+      modal.hidden = true;
+    }, 250);
+  }
+
+  if (lastFocusedElementBeforePixModal && typeof lastFocusedElementBeforePixModal.focus === 'function') {
+    lastFocusedElementBeforePixModal.focus();
+  }
+}
+
+// Copia o código Pix para a área de transferência com fallback
+async function copyPixCode() {
+  const textarea = $('pixCodeText');
+  const code = textarea ? textarea.value : '';
+  if (!code) return;
+
+  let copied = false;
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(code);
+      copied = true;
+    } catch (e) {
+      copied = false;
+    }
+  }
+
+  if (!copied && textarea) {
+    try {
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      copied = document.execCommand('copy');
+    } catch (e) {
+      copied = false;
+    }
+  }
+
+  const copyBtn = $('pixCopyBtn');
+  const feedback = $('pixCopyFeedback');
+
+  if (copied) {
+    if (copyBtn) copyBtn.textContent = 'Código copiado ✓';
+    if (feedback) feedback.textContent = 'Código Pix copiado para a área de transferência com sucesso.';
+    setTimeout(() => {
+      if (copyBtn) copyBtn.textContent = 'Copiar código Pix';
+    }, 2000);
+  } else {
+    if (copyBtn) copyBtn.textContent = 'Selecione o código abaixo';
+    if (feedback) feedback.textContent = 'Não foi possível copiar automaticamente. Selecione e copie o código manualmente.';
+    setTimeout(() => {
+      if (copyBtn) copyBtn.textContent = 'Copiar código Pix';
+    }, 2000);
+  }
+}
+
+// Finaliza o pedido após pagamento via Pix, enviando mensagem enriquecida ao WhatsApp
+function confirmPixPaymentAndSend() {
+  const nameInput = $('clientName');
+  const addressInput = $('clientAddress');
+  const notesInput = $('clientNotes');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const address = addressInput ? addressInput.value.trim() : '';
+  const notes = notesInput ? notesInput.value.trim() : '';
+  const orderId = state.currentOrderId || generateOrderId();
+
+  const summary = calculateOrderSummary();
+  const message = buildWhatsAppOrderMessage({
+    name,
+    address,
+    payment: 'PIX',
+    change: '',
+    notes,
+    orderId
+  }, summary);
+
+  const waURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  window.open(waURL, '_blank', 'noopener,noreferrer');
+
+  closePixModal();
+  closeCartDrawer();
+}
+
+// Gerencia a visibilidade e habilitação da opção Pix conforme a chave e total
+function syncPixAvailability() {
+  const paymentSelect = $('paymentMethod');
+  if (!paymentSelect) return;
+
+  const pixOption = paymentSelect.querySelector('option[value="PIX"]');
+  const isPixEnabled = Boolean(PIX_CHAVE && PIX_CHAVE.trim().length > 0);
+  const helper = $('pixPaymentHelper');
+
+  if (!isPixEnabled) {
+    if (pixOption) {
+      pixOption.hidden = true;
+      pixOption.disabled = true;
+      if (paymentSelect.value === 'PIX') {
+        paymentSelect.value = 'Cartão de Crédito (levar maquininha)';
+      }
+    }
+    if (helper) helper.style.display = 'none';
+    return;
+  }
+
+  // Pix com chave configurada
+  if (pixOption) {
+    pixOption.hidden = false;
+    const summary = calculateOrderSummary();
+    pixOption.disabled = (summary.finalTotal <= 0);
+  }
+
+  if (helper) {
+    helper.style.display = (paymentSelect.value === 'PIX') ? 'block' : 'none';
+  }
+}
+
+// Valida os campos do cliente e envia o pedido para o WhatsApp ou abre modal do Pix
 function sendOrderToWhatsApp() {
   if (state.cart.length === 0) return;
 
@@ -2207,21 +2522,27 @@ function sendOrderToWhatsApp() {
   const changeInput = $('clientChange');
   const notesInput = $('clientNotes');
 
-  const name = nameInput.value.trim();
-  const address = addressInput.value.trim();
-  const payment = paymentSelect.value;
-  const change = changeInput.value.trim();
-  const notes = notesInput.value.trim();
+  const name = nameInput ? nameInput.value.trim() : '';
+  const address = addressInput ? addressInput.value.trim() : '';
+  const payment = paymentSelect ? paymentSelect.value : '';
+  const change = changeInput ? changeInput.value.trim() : '';
+  const notes = notesInput ? notesInput.value.trim() : '';
 
   if (!name) {
     alert('Por favor, informe o seu nome para identificarmos o pedido.');
-    nameInput.focus();
+    nameInput?.focus();
     return;
   }
 
   if (state.deliveryMode === 'entrega' && !address) {
     alert('Por favor, informe o endereço de entrega em Palotina.');
-    addressInput.focus();
+    addressInput?.focus();
+    return;
+  }
+
+  const isPixActive = Boolean(PIX_CHAVE && PIX_CHAVE.trim().length > 0);
+  if (payment === 'PIX' && isPixActive) {
+    openPixPaymentModal();
     return;
   }
 
@@ -2642,6 +2963,12 @@ function initHeroComposition() {
   // O novo hero desktop usa foto horizontal ponta a ponta e degradê escuro.
   // Desativa e limpa recursos dinâmicos do hero antigo (pizza giratória, miniaturas, autoplay e parallax).
   teardownDesktopHero();
+
+  // Sincroniza frete grátis na linha de informações do hero a partir da constante existente
+  const metaFreteText = document.querySelector('.hero-meta-frete-text');
+  if (metaFreteText && typeof CONFIG !== 'undefined' && CONFIG.freeShippingThreshold) {
+    metaFreteText.textContent = `Frete grátis acima de ${formatBRL(CONFIG.freeShippingThreshold)}`;
+  }
 }
 
 // Parallax sutil nos elementos decorativos (manjericão e tomates) apenas em telas grandes
@@ -2986,9 +3313,13 @@ document.addEventListener('DOMContentLoaded', () => {
   $('closeCartBtn')?.addEventListener('click', closeCartDrawer);
   $('cartOverlay')?.addEventListener('click', closeCartDrawer);
 
-  // Fechar menus na tecla Escape
+  // Fechar modal Pix ou gaveta do carrinho na tecla Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      if (typeof isPixModalOpen === 'function' && isPixModalOpen()) {
+        closePixModal();
+        return;
+      }
       closeCartDrawer();
       toggleMobileNav(false);
     }
@@ -2998,10 +3329,51 @@ document.addEventListener('DOMContentLoaded', () => {
   $('optEntrega')?.addEventListener('click', () => setDeliveryMode('entrega'));
   $('optRetirada')?.addEventListener('click', () => setDeliveryMode('retirada'));
 
-  // Exibir campo de troco apenas para pagamento em Dinheiro
+  // Exibir campo de troco apenas para Dinheiro e texto auxiliar para Pix
   $('paymentMethod')?.addEventListener('change', (e) => {
-    $('changeGroup').style.display = (e.target.value === 'Dinheiro') ? 'flex' : 'none';
+    const val = e.target.value;
+    $('changeGroup').style.display = (val === 'Dinheiro') ? 'flex' : 'none';
+    const helper = $('pixPaymentHelper');
+    if (helper) {
+      helper.style.display = (val === 'PIX') ? 'block' : 'none';
+    }
   });
+
+  // Listeners do modal de pagamento Pix
+  $('pixCloseBtn')?.addEventListener('click', closePixModal);
+  $('pixModalOverlay')?.addEventListener('click', closePixModal);
+  $('pixBackBtn')?.addEventListener('click', () => {
+    closePixModal();
+    $('paymentMethod')?.focus();
+  });
+  $('pixCopyBtn')?.addEventListener('click', copyPixCode);
+  $('pixConfirmPaidBtn')?.addEventListener('click', confirmPixPaymentAndSend);
+
+  // Focus trap acessível dentro do modal Pix
+  $('pixModal')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const focusables = $('pixModal').querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        last.focus();
+        e.preventDefault();
+      }
+    } else {
+      if (document.activeElement === last) {
+        first.focus();
+        e.preventDefault();
+      }
+    }
+  });
+
+  // Sincroniza disponibilidade inicial do Pix no carregamento
+  syncPixAvailability();
 
   // Prevenção de recarregamento no formulário de checkout
   $('checkoutForm')?.addEventListener('submit', (e) => e.preventDefault());

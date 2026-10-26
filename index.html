@@ -252,12 +252,12 @@
      ===== HERO SECTION =====
      ======================================================================== -->
     <section class="hero" id="inicio">
-      <!-- TROCAR POR FOTO REAL DA MONTESE, HORIZONTAL, PIZZA VISÍVEL COM FATIAS -->
+      <!-- TROCAR POR FOTO REAL DA MONTESE, HORIZONTAL, PIZZA INTEIRA À DIREITA, ESPAÇO LIMPO À ESQUERDA -->
       <picture class="hero-bg-picture">
         <source media="(min-width: 768px)" srcset="img/hero-montese-1280.webp 1280w, img/hero-montese-1920.webp 1920w" sizes="100vw" type="image/webp">
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E"
           alt="Pizza artesanal da Montese saindo do forno, com borda alta e dourada"
-          width="1920" height="760" fetchpriority="high" class="hero-bg-img">
+          width="1920" height="1080" fetchpriority="high" class="hero-bg-img">
       </picture>
 
       <!-- Elementos Decorativos Flutuantes (Renderizados via JS apenas em Desktop >= 768px) -->
@@ -422,7 +422,7 @@
                 <circle cx="5.5" cy="18.5" r="2.5" />
                 <circle cx="18.5" cy="18.5" r="2.5" />
               </svg>
-              <span>Frete grátis acima de R$ 80</span>
+              <span class="hero-meta-frete-text">Frete grátis acima de R$ 80</span>
             </div>
           </div>
 
@@ -1358,6 +1358,9 @@
               <option value="Cartão de Débito (levar maquininha)">Cartão de Débito (levar maquininha)</option>
               <option value="Dinheiro">Dinheiro</option>
             </select>
+            <p id="pixPaymentHelper" class="form-help-text pix-help-text" style="display: none;">
+              Pague agora pelo QR Code e envie o comprovante no WhatsApp.
+            </p>
           </div>
 
           <div class="form-group" id="changeGroup" style="display: none;">
@@ -1445,9 +1448,61 @@
 
 
   <!-- ========================================================================
-       JAVASCRIPT PURO (CONSTANTES, OFERTAS, CARDÁPIO, CARRINHO E INTERAÇÕES)
+       MODAL DE PAGAMENTO VIA PIX (QR CODE + COPIA E COLA)
        ======================================================================== -->
+  <div class="pix-modal-overlay" id="pixModalOverlay" hidden></div>
+  <div class="pix-modal" id="pixModal" role="dialog" aria-modal="true" aria-labelledby="pixModalTitle" hidden>
+    <div class="pix-modal-header">
+      <h2 id="pixModalTitle" class="pix-modal-title">Pague com Pix</h2>
+      <button type="button" class="pix-modal-close" id="pixCloseBtn" aria-label="Fechar tela de pagamento">✕</button>
+    </div>
 
+    <div class="pix-modal-body">
+      <div class="pix-total-highlight">
+        <span class="pix-total-label">Total a Pagar</span>
+        <strong class="pix-total-value" id="pixTotalValue">R$ 0,00</strong>
+      </div>
+
+      <div class="pix-qrcode-wrapper" id="pixQrCodeWrapper" role="img" aria-label="QR Code Pix">
+        <!-- QR Code SVG renderizado via qrcode-generator -->
+      </div>
+
+      <div class="pix-copy-section">
+        <button type="button" class="btn btn-secondary pix-copy-btn" id="pixCopyBtn">
+          Copiar código Pix
+        </button>
+        <div id="pixCopyFeedback" class="sr-only" role="status" aria-live="polite"></div>
+
+        <div class="pix-code-container">
+          <label for="pixCodeText" class="sr-only">Código Pix Copia e Cola</label>
+          <textarea id="pixCodeText" class="pix-code-textarea" readonly rows="3" spellcheck="false"
+            aria-label="Código Pix Copia e Cola"></textarea>
+        </div>
+      </div>
+
+      <ol class="pix-steps">
+        <li>Abra o app do seu banco e escolha Pix.</li>
+        <li>Escaneie o QR Code ou cole o código.</li>
+        <li>Confira o valor e pague.</li>
+        <li>Toque em "Já paguei" para enviar o pedido e o comprovante.</li>
+      </ol>
+
+      <button type="button" class="btn btn-primary btn-pix-confirm" id="pixConfirmPaidBtn">
+        Já paguei, enviar pedido no WhatsApp
+      </button>
+
+      <button type="button" class="pix-back-btn" id="pixBackBtn">
+        Voltar e escolher outra forma de pagamento
+      </button>
+
+      <p class="pix-notice">
+        O pedido só é preparado após a confirmação do pagamento pela pizzaria.
+      </p>
+    </div>
+  </div>
+
+  <!-- Script da Biblioteca de QR Code Local -->
+  <script src="js/qrcode.min.js" defer></script>
   <!-- Script Principal da Aplicação -->
   <script src="js/script.js" defer></script>
 </body>
