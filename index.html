@@ -43,10 +43,10 @@
     "description": "Montese pizzaria em Palotina - PR. Pizzas artesanais preparadas com ingredientes selecionados, atendimento acolhedor no salão, balcão e delivery.",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Centro (Rua e número a confirmar)",
-      "addressLocality": "Palotina",
+      "streetAddress": "R. Fortaleza, 3214 - Recanto Tropical, Cascavel - PR,",
+      "addressLocality": "Cascavel",
       "addressRegion": "PR",
-      "postalCode": "85950-000",
+      "postalCode": "85807-090",
       "addressCountry": "BR"
     },
     "geo": {
@@ -54,7 +54,7 @@
       "latitude": -24.2839,
       "longitude": -53.8403
     },
-    "telephone": "+5544998212660",
+    "telephone": "045991563041",
     "servesCuisine": ["Pizza", "Italiana", "Brasileira"],
     "priceRange": "$$",
     "openingHoursSpecification": [
@@ -62,7 +62,7 @@
         "@type": "OpeningHoursSpecification",
         "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         "opens": "18:00",
-        "closes": "23:30"
+        "closes": "23:00"
       }
     ]
   }
@@ -254,10 +254,11 @@
     <section class="hero" id="inicio">
       <!-- TROCAR POR FOTO REAL DA MONTESE, HORIZONTAL, PIZZA INTEIRA À DIREITA, ESPAÇO LIMPO À ESQUERDA -->
       <picture class="hero-bg-picture">
-        <source media="(min-width: 768px)" srcset="img/hero-montese-1280.webp 1280w, img/hero-montese-1920.webp 1920w" sizes="100vw" type="image/webp">
+        <source media="(min-width: 768px)" srcset="img/hero-montese-1280.webp 1280w, img/hero-montese-1920.webp 1920w"
+          sizes="100vw" type="image/webp">
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'/%3E"
-          alt="Pizza artesanal da Montese saindo do forno, com borda alta e dourada"
-          width="1920" height="1080" fetchpriority="high" class="hero-bg-img">
+          alt="Pizza artesanal da Montese saindo do forno, com borda alta e dourada" width="1920" height="1080"
+          fetchpriority="high" class="hero-bg-img">
       </picture>
 
       <!-- Elementos Decorativos Flutuantes (Renderizados via JS apenas em Desktop >= 768px) -->
@@ -271,19 +272,23 @@
         <div class="menu-search-wrapper" id="menuSearchWrapper">
           <label for="menuSearchInput" class="sr-only">Buscar sabor ou ingrediente</label>
           <div class="menu-search-box">
-            <svg class="menu-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="menu-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="search" id="menuSearchInput" class="menu-search-input" placeholder="Buscar sabor ou ingrediente" autocomplete="off">
-            <button type="button" id="menuSearchClear" class="menu-search-clear" aria-label="Limpar busca" hidden>✕</button>
+            <input type="search" id="menuSearchInput" class="menu-search-input"
+              placeholder="Buscar sabor ou ingrediente" autocomplete="off">
+            <button type="button" id="menuSearchClear" class="menu-search-clear" aria-label="Limpar busca"
+              hidden>✕</button>
           </div>
           <div id="menuSearchStatus" class="sr-only" role="status" aria-live="polite"></div>
         </div>
 
         <!-- 3. Banner em Carrossel (Substitui o hero tradicional no celular) -->
         <div class="mobile-banner-carousel-wrap">
-          <div class="mobile-banner-carousel" id="mobileBannerCarousel" role="region" aria-roledescription="carrossel" aria-label="Destaques e Ofertas da Montese">
+          <div class="mobile-banner-carousel" id="mobileBannerCarousel" role="region" aria-roledescription="carrossel"
+            aria-label="Destaques e Ofertas da Montese">
             <!-- Slides gerados dinamicamente via JS em renderMobileBanner() -->
           </div>
 
@@ -292,7 +297,8 @@
         </div>
 
         <!-- Card do Combo Família logo abaixo do banner (Somente Celular) -->
-        <div class="mobile-offer-banner mobile-combo-card" id="mobileOfferBanner" role="region" aria-label="Oferta Combo Família"></div>
+        <div class="mobile-offer-banner mobile-combo-card" id="mobileOfferBanner" role="region"
+          aria-label="Oferta Combo Família"></div>
 
         <!-- 4. Faixa de Informações com rolagem horizontal (Chips) -->
         <div class="mobile-info-strip" role="region" aria-label="Informações do delivery">
@@ -304,7 +310,8 @@
 
           <!-- 2. Tempo de entrega -->
           <div class="mobile-info-chip">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
@@ -313,7 +320,8 @@
 
           <!-- 3. Localização -->
           <div class="mobile-info-chip">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
@@ -322,7 +330,8 @@
 
           <!-- 4. Frete grátis (oculto no celular para não duplicar o slide 3; mantido no HTML) -->
           <div class="mobile-info-chip mobile-chip-frete">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
               <rect x="1" y="3" width="15" height="13"></rect>
               <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
               <circle cx="5.5" cy="18.5" r="2.5"></circle>
@@ -341,7 +350,8 @@
             <div class="hero-mobile-pizza-glow" aria-hidden="true"></div>
             <picture class="hero-mobile-pizza-picture">
               <source media="(max-width: 767.98px)" srcset="img/pizza-hero-mobile.webp" type="image/webp">
-              <source media="(min-width: 768px)" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
+              <source media="(min-width: 768px)"
+                srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
               <img src="img/pizza-hero-mobile.webp" alt="Pizza artesanal da Montese com borda alta e dourada"
                 width="230" height="230" fetchpriority="high" class="hero-mobile-pizza-img">
             </picture>
@@ -387,7 +397,8 @@
           <!-- CONFIRMAR COM A PIZZARIA: fermentação de 48h e forno a lenha -->
           <p class="hero-subtitle">
             Massa de fermentação lenta (48h) com borda alta e dourada.
-            <span class="hero-subtitle-rest">Assada em forno a lenha e finalizada com ingredientes selecionados. Uma experiência elegante e acolhedora no salão ou no conforto do seu endereço.</span>
+            <span class="hero-subtitle-rest">Assada em forno a lenha e finalizada com ingredientes selecionados. Uma
+              experiência elegante e acolhedora no salão ou no conforto do seu endereço.</span>
           </p>
 
           <div class="hero-buttons">
@@ -558,57 +569,70 @@
           <!-- Abas de Filtro / Categorias Circulares -->
           <div class="menu-tabs-wrapper">
             <div class="menu-tabs" role="tablist" aria-label="Categorias do cardápio">
-              <button type="button" class="menu-tab-btn active" data-category="todos" role="tab" aria-selected="true" tabindex="0">
+              <button type="button" class="menu-tab-btn active" data-category="todos" role="tab" aria-selected="true"
+                tabindex="0">
                 <span class="tab-label">Todos os Itens</span>
               </button>
-              <button type="button" class="menu-tab-btn" data-category="tradicionais" role="tab" aria-selected="false" tabindex="-1">
+              <button type="button" class="menu-tab-btn" data-category="tradicionais" role="tab" aria-selected="false"
+                tabindex="-1">
                 <span class="category-icon-circle" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L2 22h20L12 2z"/>
-                    <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
-                    <circle cx="9" cy="18" r="1.2" fill="currentColor"/>
-                    <circle cx="15" cy="18" r="1.2" fill="currentColor"/>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 22h20L12 2z" />
+                    <circle cx="12" cy="14" r="1.5" fill="currentColor" />
+                    <circle cx="9" cy="18" r="1.2" fill="currentColor" />
+                    <circle cx="15" cy="18" r="1.2" fill="currentColor" />
                   </svg>
                 </span>
                 <span class="tab-label">Pizzas Tradicionais</span>
                 <span class="tab-mobile-label">Pizzas</span>
               </button>
-              <button type="button" class="menu-tab-btn" data-category="especiais" role="tab" aria-selected="false" tabindex="-1">
+              <button type="button" class="menu-tab-btn" data-category="especiais" role="tab" aria-selected="false"
+                tabindex="-1">
                 <span class="category-icon-circle" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                   </svg>
                 </span>
                 <span class="tab-label">Especiais Montese</span>
                 <span class="tab-mobile-label">Especiais</span>
               </button>
-              <button type="button" class="menu-tab-btn" data-category="doces" role="tab" aria-selected="false" tabindex="-1">
+              <button type="button" class="menu-tab-btn" data-category="doces" role="tab" aria-selected="false"
+                tabindex="-1">
                 <span class="category-icon-circle" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 </span>
                 <span class="tab-label">Pizzas Doces</span>
                 <span class="tab-mobile-label">Doces</span>
               </button>
-              <button type="button" class="menu-tab-btn" data-category="bebidas" role="tab" aria-selected="false" tabindex="-1">
+              <button type="button" class="menu-tab-btn" data-category="bebidas" role="tab" aria-selected="false"
+                tabindex="-1">
                 <span class="category-icon-circle" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-                    <line x1="6" y1="1" x2="6" y2="4"/>
-                    <line x1="10" y1="1" x2="10" y2="4"/>
-                    <line x1="14" y1="1" x2="14" y2="4"/>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                    <line x1="6" y1="1" x2="6" y2="4" />
+                    <line x1="10" y1="1" x2="10" y2="4" />
+                    <line x1="14" y1="1" x2="14" y2="4" />
                   </svg>
                 </span>
                 <span class="tab-label">Bebidas</span>
                 <span class="tab-mobile-label">Bebidas</span>
               </button>
-              <button type="button" class="menu-tab-btn menu-tab-btn--ofertas" data-category="ofertas" role="tab" aria-selected="false" tabindex="-1">
+              <button type="button" class="menu-tab-btn menu-tab-btn--ofertas" data-category="ofertas" role="tab"
+                aria-selected="false" tabindex="-1">
                 <span class="category-icon-circle" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
                   </svg>
                 </span>
                 <span class="tab-label sr-only">Ofertas</span>
@@ -616,18 +640,20 @@
               </button>
             </div>
           </div>
+
+          <!-- Seletor Global de Tamanho (Somente Celular) -->
+          <div class="size-bar" id="sizeBar" role="group" aria-label="Tamanho das pizzas no cardápio"></div>
         </div>
 
-        <!-- Seletor Global de Tamanho (Somente Celular - Fica no início da lista) -->
-        <div class="size-bar" id="sizeBar" role="group" aria-label="Tamanho das pizzas no cardápio"></div>
-
         <!-- 5. Seção "Mais pedidas" em carrossel horizontal (Somente Celular) -->
-        <div class="mobile-mais-pedidas" id="mobileMaisPedidas" role="region" aria-label="Pizzas mais pedidas da Montese">
+        <div class="mobile-mais-pedidas" id="mobileMaisPedidas" role="region"
+          aria-label="Pizzas mais pedidas da Montese">
           <div class="mobile-section-header">
             <h2 class="mobile-section-title">Mais pedidas</h2>
             <a href="#menuGrid" class="mobile-section-link" id="mobileVerTodasBtn">Ver todas</a>
           </div>
-          <div class="mobile-mais-pedidas-carousel" id="mobileMaisPedidasCarousel" role="region" aria-roledescription="carrossel" aria-label="Carrossel de pizzas mais pedidas"></div>
+          <div class="mobile-mais-pedidas-carousel" id="mobileMaisPedidasCarousel" role="region"
+            aria-roledescription="carrossel" aria-label="Carrossel de pizzas mais pedidas"></div>
         </div>
 
         <!-- Legenda de tamanhos -->
@@ -852,9 +878,12 @@
         <div class="steps-nav-header" id="stepsNavHeader">
           <div class="steps-counter" id="stepsCounter" aria-live="polite">Passo 1 de 3</div>
           <div class="steps-progress-bar" role="tablist" aria-label="Progresso dos passos" id="stepsProgressBar">
-            <button type="button" class="steps-progress-segment is-active" role="tab" aria-selected="true" aria-label="Passo 1 de 3: Escolha no Cardápio" data-step-index="0"></button>
-            <button type="button" class="steps-progress-segment" role="tab" aria-selected="false" aria-label="Passo 2 de 3: Confira seu Carrinho" data-step-index="1"></button>
-            <button type="button" class="steps-progress-segment" role="tab" aria-selected="false" aria-label="Passo 3 de 3: Envie pelo WhatsApp" data-step-index="2"></button>
+            <button type="button" class="steps-progress-segment is-active" role="tab" aria-selected="true"
+              aria-label="Passo 1 de 3: Escolha no Cardápio" data-step-index="0"></button>
+            <button type="button" class="steps-progress-segment" role="tab" aria-selected="false"
+              aria-label="Passo 2 de 3: Confira seu Carrinho" data-step-index="1"></button>
+            <button type="button" class="steps-progress-segment" role="tab" aria-selected="false"
+              aria-label="Passo 3 de 3: Envie pelo WhatsApp" data-step-index="2"></button>
           </div>
         </div>
 
@@ -863,7 +892,9 @@
             <div class="step-card-header">
               <div class="step-number" id="stepNumber1">
                 <span class="step-number-text">1</span>
-                <svg class="step-number-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg class="step-number-check" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true">
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
@@ -872,7 +903,8 @@
                 <span class="step-cart-badge" id="step1CartBadge" style="display: none;"></span>
               </div>
               <div class="step-card-icon-wrap" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
                   <path d="M6 6h10"></path>
                   <path d="M6 10h10"></path>
@@ -884,7 +916,8 @@
             </p>
             <div class="step-card-actions">
               <button type="button" class="step-action-btn" id="step1ActionBtn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="12" y1="8" x2="12" y2="16"></line>
                   <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -902,7 +935,8 @@
                 <h3>Confira seu Carrinho</h3>
               </div>
               <div class="step-card-icon-wrap" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="8" cy="21" r="1"></circle>
                   <circle cx="19" cy="21" r="1"></circle>
                   <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
@@ -914,8 +948,10 @@
             <div class="step-card-actions step-card-actions--column">
               <div class="step-chips-wrapper">
                 <div class="step-chips" role="radiogroup" aria-label="Opção de entrega">
-                  <button type="button" class="step-chip is-active" id="stepChipEntrega" role="radio" aria-checked="true">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <button type="button" class="step-chip is-active" id="stepChipEntrega" role="radio"
+                    aria-checked="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <rect x="1" y="3" width="15" height="13"></rect>
                       <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
                       <circle cx="5.5" cy="18.5" r="2.5"></circle>
@@ -924,7 +960,8 @@
                     Entrega
                   </button>
                   <button type="button" class="step-chip" id="stepChipRetirada" role="radio" aria-checked="false">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                       <line x1="3" y1="6" x2="21" y2="6"></line>
                       <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -937,7 +974,8 @@
                 </div>
               </div>
               <button type="button" class="step-action-btn" id="step2ActionBtn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <circle cx="8" cy="21" r="1"></circle>
                   <circle cx="19" cy="21" r="1"></circle>
                   <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
@@ -954,8 +992,11 @@
                 <h3>Envie pelo WhatsApp</h3>
               </div>
               <div class="step-card-icon-wrap" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                  </path>
                 </svg>
               </div>
             </div>
@@ -964,8 +1005,11 @@
             <div class="step-card-actions">
               <a href="https://wa.me/5544998212660?text=Ol%C3%A1%2C%20Montese%20pizzaria!%20Quero%20fazer%20um%20pedido."
                 data-wa-link target="_blank" rel="noopener noreferrer" class="step-action-btn" id="step3ActionBtn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                  </path>
                 </svg>
                 Abrir WhatsApp
               </a>
@@ -975,15 +1019,19 @@
 
         <!-- Botões de Navegação do Carrossel (Exclusivo Celular < 768px) -->
         <div class="steps-controls" id="stepsControls">
-          <button type="button" class="btn btn-secondary steps-btn-nav steps-btn-prev" id="stepsBtnPrev" aria-label="Passo anterior" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <button type="button" class="btn btn-secondary steps-btn-nav steps-btn-prev" id="stepsBtnPrev"
+            aria-label="Passo anterior" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
             <span>Anterior</span>
           </button>
-          <button type="button" class="btn btn-secondary steps-btn-nav steps-btn-next" id="stepsBtnNext" aria-label="Próximo passo">
+          <button type="button" class="btn btn-secondary steps-btn-nav steps-btn-next" id="stepsBtnNext"
+            aria-label="Próximo passo">
             <span>Próximo</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
@@ -1149,34 +1197,40 @@
          ==================================================================== -->
     <nav class="mobile-bottom-bar" id="mobileBottomBar" aria-label="Navegação do aplicativo">
       <!-- 1. Início -->
-      <button type="button" class="mobile-nav-item is-active" id="mobileNavInicio" data-nav-target="inicio" aria-label="Ir para o Início">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
+      <button type="button" class="mobile-nav-item is-active" id="mobileNavInicio" data-nav-target="inicio"
+        aria-label="Ir para o Início">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
         <span>Início</span>
       </button>
 
       <!-- 2. Cardápio -->
-      <button type="button" class="mobile-nav-item" id="mobileNavCardapio" data-nav-target="cardapio" aria-label="Ir para o Cardápio">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="8" y1="6" x2="21" y2="6"/>
-          <line x1="8" y1="12" x2="21" y2="12"/>
-          <line x1="8" y1="18" x2="21" y2="18"/>
-          <line x1="3" y1="6" x2="3.01" y2="6"/>
-          <line x1="3" y1="12" x2="3.01" y2="12"/>
-          <line x1="3" y1="18" x2="3.01" y2="18"/>
+      <button type="button" class="mobile-nav-item" id="mobileNavCardapio" data-nav-target="cardapio"
+        aria-label="Ir para o Cardápio">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="8" y1="6" x2="21" y2="6" />
+          <line x1="8" y1="12" x2="21" y2="12" />
+          <line x1="8" y1="18" x2="21" y2="18" />
+          <line x1="3" y1="6" x2="3.01" y2="6" />
+          <line x1="3" y1="12" x2="3.01" y2="12" />
+          <line x1="3" y1="18" x2="3.01" y2="18" />
         </svg>
         <span>Cardápio</span>
       </button>
 
-      <!-- 3. Botão Central do Carrinho (Elevado) -->
-      <button type="button" class="mobile-nav-cart-btn" id="mobileBottomCartBtn" aria-label="Ver carrinho de pedidos">
+      <!-- 3. Botão Central do Carrinho (DENTRO da barra) -->
+      <button type="button" class="mobile-nav-cart-btn" id="mobileBottomCartBtn"
+        aria-label="Abrir carrinho, 0 itens, R$ 0,00">
         <div class="mobile-nav-cart-circle">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
           </svg>
           <span class="mobile-nav-cart-badge" id="mobileBottomCartBadge">0</span>
         </div>
@@ -1184,8 +1238,10 @@
       </button>
 
       <!-- 4. Buscar -->
-      <button type="button" class="mobile-nav-item" id="mobileNavBuscar" data-nav-target="buscar" aria-label="Buscar no cardápio">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button type="button" class="mobile-nav-item" id="mobileNavBuscar" data-nav-target="buscar"
+        aria-label="Buscar no cardápio">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
@@ -1194,10 +1250,14 @@
 
       <!-- 5. WhatsApp (Outline 24px) -->
       <a href="https://wa.me/5544998212660?text=Ol%C3%A1%2C%20Montese%20pizzaria!%20Gostaria%20de%20fazer%20um%20pedido."
-        data-wa-link target="_blank" rel="noopener noreferrer" class="mobile-nav-item" id="mobileNavWa" aria-label="Pedir no WhatsApp">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-          <path d="M9.5 8.5a.5.5 0 0 0-.5.5c0 3.3 2.7 6 6 6a.5.5 0 0 0 .5-.5v-1.2a.5.5 0 0 0-.4-.5l-1.4-.3a.5.5 0 0 0-.5.2l-.6.6c-1.3-.7-2-1.4-2.7-2.7l.6-.6a.5.5 0 0 0 .2-.5l-.3-1.4a.5.5 0 0 0-.5-.4H9.5z"/>
+        data-wa-link target="_blank" rel="noopener noreferrer" class="mobile-nav-item" id="mobileNavWa"
+        aria-label="Pedir no WhatsApp">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path
+            d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+          <path
+            d="M9.5 8.5a.5.5 0 0 0-.5.5c0 3.3 2.7 6 6 6a.5.5 0 0 0 .5-.5v-1.2a.5.5 0 0 0-.4-.5l-1.4-.3a.5.5 0 0 0-.5.2l-.6.6c-1.3-.7-2-1.4-2.7-2.7l.6-.6a.5.5 0 0 0 .2-.5l-.3-1.4a.5.5 0 0 0-.5-.4H9.5z" />
         </svg>
         <span>WhatsApp</span>
       </a>
@@ -1433,14 +1493,16 @@
         <h3 id="sizeSheetTitle" class="size-sheet-title">Escolha o tamanho</h3>
         <span class="size-sheet-item" id="sizeSheetItem"></span>
       </div>
-      <button type="button" class="size-sheet-close" id="closeSizeSheetBtn" aria-label="Fechar opções de tamanho">✕</button>
+      <button type="button" class="size-sheet-close" id="closeSizeSheetBtn"
+        aria-label="Fechar opções de tamanho">✕</button>
     </div>
     <div class="size-sheet-options" id="sizeSheetOptions" role="group" aria-label="Opções de tamanho e preço"></div>
   </dialog>
 
   <!-- Botão Voltar ao Topo do Cardápio (Somente Celular) -->
   <button type="button" class="back-to-menu-top" id="backToMenuTop" aria-label="Voltar ao início do cardápio">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <line x1="12" y1="19" x2="12" y2="5"></line>
       <polyline points="5 12 12 5 19 12"></polyline>
     </svg>

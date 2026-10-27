@@ -33,8 +33,13 @@
 
   /* Grafite Quente (Textos sobre fundo claro e divisórias) */
   --grafite: #2B2623;
-  --grafite-medio: #5C5552;
+  --grafite-medio: #4F4742;
+  --texto-secundario: #4F4742;
   --borda: #E2DDD5;
+
+  /* Espaço e dimensões da barra inferior no celular (< 768px) */
+  --altura-barra-inferior: 68px;
+  --salto-botao-central: 0px;
 
   /* Tipografia */
   --fonte-titulo: 'Cormorant Garamond', Georgia, serif;
@@ -50,7 +55,7 @@
   --sombra-vermelho: 0 4px 14px rgba(225, 10, 23, 0.32);
   --sombra-vermelho-hover: 0 6px 20px rgba(225, 10, 23, 0.48);
   --transicao: 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-  --altura-header: 56px; /* Altura do header (64px) + faixa tricolor (4px) no celular */
+  --altura-header: 54px; /* Altura do header (54px) no celular */
 
   /* Tom escuro para vinheta do Hero Mobile */
   --azul-noturno: #070B17;
@@ -78,7 +83,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 154px; /* Desconta header (68px) + barra de filtros fixa (86px) no celular */
+  scroll-padding-top: 140px; /* Desconta header (~54px) + barra de filtros fixa (86px) no celular */
   font-size: 16px;
 }
 
@@ -109,11 +114,11 @@ body {
   z-index: 100;
   background-color: #0B1020;
   border-top: 1px solid rgba(250, 248, 243, 0.1);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.45);
-  height: 64px;
-  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  height: 68px;
+  height: calc(68px + env(safe-area-inset-bottom, 0px));
   padding: 0 0.5rem env(safe-area-inset-bottom, 0px);
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-around;
   margin: 0;
   box-sizing: border-box;
@@ -126,19 +131,20 @@ body {
 /* 5 Itens de navegação na barra inferior */
 .mobile-nav-item {
   flex: 1;
-  height: 64px;
+  height: 68px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   background: transparent;
   border: none;
-  color: rgba(250, 248, 243, 0.7);
+  color: rgba(250, 248, 243, 0.85);
   text-decoration: none;
   cursor: pointer;
   transition: color 0.2s ease;
   outline: none;
+  box-sizing: border-box;
 }
 
 .mobile-nav-item svg {
@@ -147,7 +153,7 @@ body {
   stroke: currentColor;
   stroke-width: 1.75;
   fill: none;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   flex-shrink: 0;
   transition: stroke 0.2s ease, transform 0.2s ease;
 }
@@ -174,52 +180,73 @@ body {
   stroke: var(--verde-claro, #5CE69B);
 }
 
-/* Botão Central Elevado da Sacola/Carrinho */
+/* Botão Central do Carrinho (DENTRO da barra, sem sair dela) */
 .mobile-nav-cart-btn {
   flex: 1;
-  height: 64px;
+  height: 68px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   background: transparent;
   border: none;
   cursor: pointer;
   outline: none;
   text-decoration: none;
   overflow: visible;
+  box-sizing: border-box;
 }
 
 .mobile-nav-cart-circle {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 58px;
-  height: 58px;
+  position: relative;
+  top: 0;
+  left: auto;
+  transform: none;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background-color: var(--vermelho, #E10A17);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(225, 10, 23, 0.45);
-  border: 4px solid #0B1020;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 3px solid #0B1020;
+  box-shadow: none;
+  margin: 0 auto 2px auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  transition: transform 0.15s ease;
+}
+
+/* Feedback ao adicionar item: pulsada curta (scale 1.08 por 200ms, só transform), respeitando prefers-reduced-motion */
+@keyframes cartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.mobile-nav-cart-circle.is-pulse {
+  animation: cartPulse 200ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-cart-circle.is-pulse {
+    animation: none !important;
+  }
 }
 
 .mobile-nav-cart-btn:active .mobile-nav-cart-circle {
-  transform: translateX(-50%) scale(0.93);
+  transform: scale(0.93);
 }
 
 .mobile-nav-cart-circle svg {
   stroke: #ffffff;
   stroke-width: 1.75;
   fill: none;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   margin: 0;
 }
 
@@ -238,8 +265,9 @@ body {
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: 1.5px solid var(--vermelho, #E10A17);
+  box-sizing: border-box;
 }
 
 /* O total (R$ 0,00) fica logo abaixo do botão, na mesma linha de base dos rótulos dos outros itens, em creme e 12px */
@@ -250,7 +278,7 @@ body {
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
-  margin-top: auto;
+  margin: 0;
 }
 
 img {
@@ -413,7 +441,7 @@ ul {
 }
 
 .section-subtitle {
-  color: var(--grafite-medio);
+  color: var(--texto-secundario);
   font-size: 1.05rem;
 }
 
@@ -565,6 +593,34 @@ header.scrolled,
 }
 
 @media (max-width: 767.98px) {
+  :root {
+    --altura-header: 54px;
+  }
+
+  .header-inner {
+    height: 54px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .brand-logo {
+    margin: 0 auto;
+  }
+
+  .header-actions {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Carrinho único: esconde o botão do carrinho do header no celular */
+  .site-header .cart-trigger,
+  #openCartBtn.cart-trigger {
+    display: none !important;
+  }
+
   .header-status-dot {
     display: block;
     position: absolute;
@@ -848,25 +904,25 @@ header.scrolled,
   width: 100%;
   position: relative;
   z-index: 1;
-  padding: var(--ritmo-header-busca, 10px) 1rem 0;
+  padding: 0 1rem;
   box-sizing: border-box;
 }
 
-/* 2. Busca por Sabor ou Ingrediente */
+/* 2. Busca por Sabor ou Ingrediente (altura 44px, 8px de espaço acima e abaixo) */
 .mobile-hero-app .menu-search-wrapper {
-  margin: 0 0 var(--ritmo-busca-banner, 12px) 0;
+  margin: 8px 0;
 }
 
 .mobile-hero-app .menu-search-box {
   background-color: var(--azul-superficie, #131A33);
-  border: 1px solid var(--azul-borda, rgba(250, 248, 243, 0.18));
+  border: 1px solid rgba(250, 248, 243, 0.25);
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  height: 42px;
+  height: 44px;
 }
 
 .mobile-hero-app .menu-search-icon {
-  stroke: rgba(250, 248, 243, 0.65);
+  stroke: rgba(250, 248, 243, 0.85);
 }
 
 .mobile-hero-app .menu-search-input {
@@ -887,17 +943,18 @@ header.scrolled,
 }
 
 .mobile-hero-app .menu-search-input::placeholder {
-  color: rgba(250, 248, 243, 0.55);
+  color: rgba(250, 248, 243, 0.8);
+  opacity: 1;
 }
 
 .mobile-hero-app .menu-search-clear {
-  color: rgba(250, 248, 243, 0.65);
+  color: rgba(250, 248, 243, 0.85);
 }
 
-/* 3. Banner Mobile (Slide único da marca no celular: 135px) */
+/* 3. Banner Mobile (Slide único da marca no celular: 104px) */
 .mobile-banner-carousel-wrap {
   margin: 0 0 8px 0;
-  height: 135px;
+  height: 104px;
   position: relative;
   border-radius: var(--raio-m, 14px);
   overflow: hidden;
@@ -908,7 +965,7 @@ header.scrolled,
 
 @media (max-width: 767.98px) {
   .mobile-banner-carousel-wrap {
-    height: 135px !important;
+    height: 104px !important;
     margin: 0 0 8px 0 !important;
   }
   .mobile-banner-dots {
@@ -916,44 +973,57 @@ header.scrolled,
   }
   .mobile-banner-carousel {
     overflow-x: hidden !important;
+    height: 100% !important;
   }
   .mobile-banner-slide {
-    padding: 12px 14px !important;
+    padding: 6px 12px !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
   }
   .banner-slide-content {
-    max-width: 60% !important;
+    max-width: 62% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 4px !important;
   }
   .banner-slide-title {
-    font-size: 1.05rem !important;
-    margin: 0 0 8px 0 !important;
-    line-height: 1.18 !important;
+    font-size: 18px !important;
+    margin: 0 !important;
+    line-height: 1.15 !important;
+    font-weight: 700 !important;
   }
   .btn-banner-action {
     height: 36px !important;
     min-height: 36px !important;
     padding: 0 14px !important;
     font-size: 12.5px !important;
+    width: fit-content !important;
+    border-radius: var(--raio-p, 8px) !important;
   }
   .banner-slide-media {
-    width: 135px !important;
-    height: 135px !important;
-    right: -30px !important;
+    width: 96px !important;
+    height: 96px !important;
+    right: -15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
   }
   .banner-pizza-img {
-    width: 135px !important;
-    height: 135px !important;
+    width: 96px !important;
+    height: 96px !important;
+    object-fit: cover !important;
   }
   .banner-slide-media::before {
-    width: 150px !important;
-    height: 150px !important;
+    width: 106px !important;
+    height: 106px !important;
   }
   .banner-slide-media::after {
-    width: 110px !important;
-    height: 16px !important;
+    width: 80px !important;
+    height: 12px !important;
   }
 }
 
-/* Card do Combo Família (Oferta Única Mobile, Altura até 150px) */
+/* Card do Combo Família (Oferta Única Mobile, Altura até 64px em uma linha) */
 .mobile-combo-card {
   display: none;
 }
@@ -965,14 +1035,17 @@ header.scrolled,
     flex-direction: column !important;
     padding: 0 !important; /* Faixa tricolor ponta a ponta sem recuo */
     overflow: hidden !important; /* Recorta a faixa tricolor nos cantos arredondados */
-    border-radius: var(--raio-m, 14px) !important;
+    border-radius: 14px !important; /* Cantos de 14px */
     background: #131A33 !important;
-    background-color: var(--azul-superficie, #131A33) !important;
-    border: 1px solid var(--azul-borda, rgba(250, 248, 243, 0.12)) !important;
-    margin: 0 0 10px 0 !important;
+    background-color: #131A33 !important;
+    border: 1px solid rgba(250, 248, 243, 0.12) !important; /* Borda fina */
+    margin: 0 !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
-    max-height: 150px !important;
+    max-height: 64px !important;
+    height: 64px !important;
     box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 15 !important;
   }
 
   .mobile-combo-card .tricolor-bar {
@@ -985,101 +1058,110 @@ header.scrolled,
   }
 
   .mobile-combo-card-body {
-    padding: 12px 16px 14px 16px !important; /* 12px entre faixa e selo; 16px esquerda/direita/base */
+    padding: 6px 12px 8px 12px !important; /* padding de 10px 12px */
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
+    align-items: center !important;
     justify-content: space-between !important;
+    gap: 12px !important;
     flex: 1 !important;
     min-height: 0 !important;
     box-sizing: border-box !important;
+  }
+
+  .mobile-combo-col-left {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .mobile-combo-col-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
   }
 
   /* Linha 1: selo COMBO + título Combo Família */
   .mobile-combo-row-1 {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
-    min-height: 22px !important;
+    gap: 6px !important;
+    line-height: 1.15 !important;
   }
 
   .mobile-combo-badge {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 2px 7px !important;
+    padding: 1px 5px !important;
     border-radius: 4px !important;
     background-color: var(--vermelho, #E10A17) !important;
     color: #ffffff !important;
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
+    letter-spacing: 0.04em !important;
     line-height: 1.2 !important;
     flex-shrink: 0 !important;
   }
 
   .mobile-combo-title {
     font-family: var(--fonte-titulo) !important;
-    font-size: 1.05rem !important;
+    font-size: 0.98rem !important;
     font-weight: 700 !important;
     color: var(--creme, #FAF8F3) !important;
     margin: 0 !important;
-    line-height: 1.2 !important;
+    line-height: 1.15 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
-  /* Linha 2: o que está incluso, até 2 linhas com quebra normal e line-clamp: 2 */
+  /* Descrição inclusa oculta visualmente no celular (sr-only acessível mantido no DOM) */
   .mobile-combo-incluso {
-    font-size: 12px !important;
-    color: rgba(250, 248, 243, 0.85) !important;
-    margin: 3px 0 4px 0 !important;
-    line-height: 1.35 !important;
-    white-space: normal !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    word-break: break-word !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
   }
 
-  /* Linha 3: preços à esquerda (de/por) e botão à direita, alinhados ao centro */
-  .mobile-combo-row-3 {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 10px !important;
-    margin-top: auto !important;
-  }
-
+  /* Linha 2: "De R$ 89,90" riscado + "Por R$ 79,90" em vermelho de 16px, peso 700 */
   .mobile-combo-prices {
     display: flex !important;
     align-items: baseline !important;
     gap: 6px !important;
-    flex-wrap: wrap !important;
+    line-height: 1 !important;
+    margin: 0 !important;
   }
 
   .mobile-combo-price-old {
-    font-size: 12px !important;
-    color: rgba(250, 248, 243, 0.65) !important; /* Creme 65% opacidade: contraste >= 4.5:1 sobre #131A33 */
+    font-size: 11px !important;
+    color: rgba(250, 248, 243, 0.7) !important;
     text-decoration: line-through !important;
     line-height: 1 !important;
   }
 
   .mobile-combo-price-cur {
-    font-size: 1.15rem !important;
-    font-weight: 800 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
     color: var(--vermelho, #E10A17) !important;
     line-height: 1 !important;
   }
 
+  /* Coluna direita: botão "Pedir combo" de 44px, centralizado na vertical */
   .btn-combo-cta {
     height: 44px !important;
     min-height: 44px !important;
-    padding: 0 16px !important;
+    padding: 0 14px !important;
     border-radius: 999px !important;
     background-color: var(--vermelho, #E10A17) !important;
     color: #ffffff !important;
@@ -1098,7 +1180,7 @@ header.scrolled,
   }
 
   .btn-combo-cta:active {
-    background-color: var(--vermelho-escuro) !important;
+    background-color: var(--vermelho-escuro, #B8000E) !important;
     transform: scale(0.96) !important;
   }
 }
@@ -1245,7 +1327,7 @@ header.scrolled,
 
 .banner-price-old {
   font-size: 0.75rem;
-  color: rgba(250, 248, 243, 0.5);
+  color: rgba(250, 248, 243, 0.8);
   text-decoration: line-through;
 }
 
@@ -1425,15 +1507,15 @@ header.scrolled,
   }
 
   .mobile-hero-app {
-    padding: 8px 16px 0 !important;
+    padding: 0 16px 28px 16px !important; /* 28px de padding inferior: 28px - 16px sobreposição = 12px exatos entre combo e folha clara */
   }
 
   .mobile-hero-app .menu-search-wrapper {
-    margin: 0 0 8px 0 !important;
+    margin: 8px 0 !important;
   }
 
   .mobile-hero-app .menu-search-box {
-    height: 40px !important;
+    height: 44px !important;
   }
 
   /* Folha clara com cantos arredondados de 24px no topo sobrepondo o fundo escuro do hero */
@@ -1444,7 +1526,7 @@ header.scrolled,
     position: relative !important;
     z-index: 10 !important;
     box-shadow: none !important;
-    padding-top: 14px !important;
+    padding-top: 0 !important;
   }
 
   /* Oculta legenda de tamanhos no celular para priorizar pizzas na 1ª tela */
@@ -1454,7 +1536,7 @@ header.scrolled,
 
   /* Altura de referência da barra compacta para scroll-margin */
   :root {
-    --altura-barra-compacta: 54px;
+    --altura-barra-compacta: 86px;
   }
 
   /* Sentinela de 1px acima da barra de categorias para detecção sticky com IntersectionObserver */
@@ -1465,18 +1547,19 @@ header.scrolled,
     visibility: hidden;
   }
 
-  /* Barra de Categorias Mobile (Estado Normal): altura automática, padding vertical 8px */
+  /* Barra Fixa de Filtros + Tamanhos no Celular (Estado Normal: no fluxo) */
   .menu-filters-bar {
     position: sticky;
-    top: var(--altura-header, 58px);
+    top: var(--altura-header, 52px);
     z-index: 80;
     background-color: var(--creme, #FAF8F3);
     margin-inline: calc(-1 * var(--esp-16, 16px));
     padding-inline: var(--esp-16, 16px);
-    margin-bottom: 8px;
-    padding-block: 8px;
+    margin-bottom: 12px;
+    padding-top: 8px;
+    padding-bottom: 0;
     height: auto;
-    border-bottom: 1px solid rgba(43, 38, 35, 0.08);
+    border-bottom: none;
     box-sizing: border-box;
     transition: box-shadow 0.2s ease, padding 0.2s ease;
   }
@@ -1486,12 +1569,18 @@ header.scrolled,
     padding: 0;
   }
 
+  /* Linha divisória entre categorias e seletor no Estado Normal */
+  .menu-filters-bar:not(.is-stuck) .menu-tabs-wrapper {
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(43, 38, 35, 0.14); /* linha divisória de 1px em grafite com 14% de opacidade */
+  }
+
   .menu-tabs-wrapper::before,
   .menu-tabs-wrapper::after {
     display: none;
   }
 
-  /* Abas no Estado Normal: altura automática, sem corte de overflow */
+  /* Categorias no Estado Normal: círculos de 44px com rótulo de 12px */
   .menu-tabs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1505,7 +1594,7 @@ header.scrolled,
     height: auto;
   }
 
-  /* Botão da Categoria no Estado Normal: coluna, alinhado ao topo, gap de 6px */
+  /* Botão da Categoria no Estado Normal: coluna, alinhado ao topo, gap de 2px */
   .menu-tab-btn {
     position: relative;
     flex: none;
@@ -1515,7 +1604,7 @@ header.scrolled,
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 6px;
+    gap: 2px;
     background: transparent;
     border: none;
     padding: 0;
@@ -1525,12 +1614,12 @@ header.scrolled,
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Círculo de 58px no Estado Normal (especificação: 56 a 60px) */
+  /* Círculo de 44px no Estado Normal */
   .category-icon-circle {
-    width: 58px;
-    height: 58px;
-    min-width: 58px;
-    min-height: 58px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1544,18 +1633,18 @@ header.scrolled,
   }
 
   .category-icon-circle svg {
-    width: 26px;
-    height: 26px;
+    width: 20px;
+    height: 20px;
     transition: transform 0.2s ease;
   }
 
-  /* Rótulo de 12px no Estado Normal: em uma linha, centralizado, white-space: nowrap */
+  /* Rótulo de 12px no Estado Normal */
   .tab-mobile-label {
     display: block;
     font-size: 12px;
     font-weight: 600;
     color: var(--grafite);
-    line-height: 1.2;
+    line-height: 1.15;
     text-align: center;
     white-space: nowrap;
     width: 100%;
@@ -1577,86 +1666,125 @@ header.scrolled,
     font-weight: 700;
   }
 
+  /* Seletor de Tamanho no Estado Normal: dentro da barra, 44px de altura */
+  .menu-filters-bar:not(.is-stuck) .size-bar {
+    display: flex;
+    gap: 0.35rem;
+    margin-inline: 0;
+    padding-inline: 0;
+    padding-top: 11px; /* 11px + 1px borda divisória = 12px de espaço */
+    padding-bottom: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
   /* ========================================================================
      Estado Grudado (Compacto - .is-stuck):
-     Pílulas horizontais com ícone 20px + nome 12px lado a lado (altura 40px),
-     área de toque estendida a 44px, altura total da barra até 56px.
+     Duas linhas: Linha 1 (Categorias em pílulas 36px) + Linha 2 (Tamanhos 32px)
+     Padding vertical de 6px, 6px entre linhas. Altura total da barra grudada: até 86px.
+     Header + barra somam no máximo 140px.
      ======================================================================== */
   .menu-filters-bar.is-stuck {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-radius: 0;
-    padding-block: 7px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 0;
   }
 
+  .menu-filters-bar.is-stuck .menu-tabs-wrapper {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Linha 1: categorias como pílulas horizontais com ícone de 18px + nome de 12px lado a lado,
+     altura de 36px, 4 colunas iguais (grid), rótulos sempre visíveis, ativa em vermelho #E10A17 */
   .menu-filters-bar.is-stuck .menu-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     align-items: center;
-    height: auto;
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .menu-filters-bar.is-stuck .menu-tab-btn {
+    position: relative;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    height: 40px;
-    min-height: 40px;
-    max-height: 40px;
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
     border-radius: 999px;
-    padding: 0 6px;
+    padding: 0 4px;
     background-color: var(--branco, #FAF8F3);
     border: 1px solid var(--borda, rgba(43, 38, 35, 0.12));
     color: var(--grafite);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
   }
 
-  /* Área de toque estendida a 44px */
+  /* Alvo de toque estendido para 44px com pseudo-elemento, sem invadir a Linha 2 */
   .menu-filters-bar.is-stuck .menu-tab-btn::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    top: -4px;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    min-height: 42px;
+    pointer-events: auto;
   }
 
-  /* Ícone compacto de 20px no modo pílula */
+  /* Ícone compacto de 18px */
   .menu-filters-bar.is-stuck .category-icon-circle {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
     border-radius: 0;
     background: transparent;
     border: none;
     box-shadow: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: inherit;
+    flex-shrink: 0;
   }
 
   .menu-filters-bar.is-stuck .category-icon-circle svg {
     width: 18px;
     height: 18px;
+    display: block;
   }
 
-  /* Nome ao lado do ícone no modo pílula */
+  /* Nome ao lado do ícone no modo pílula (12px, sempre visível) */
   .menu-filters-bar.is-stuck .tab-mobile-label {
     font-size: 12px;
-    line-height: 1.1;
+    font-weight: 600;
+    line-height: 1;
     width: auto;
     color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
-  /* Pílula Ativa no modo compacto: fundo vermelho Montese, texto e ícone brancos */
+  /* Categoria Ativa no modo compacto: fundo vermelho #E10A17, texto e ícone brancos */
   .menu-filters-bar.is-stuck .menu-tab-btn.active {
     background-color: var(--vermelho, #E10A17);
     border-color: var(--vermelho, #E10A17);
     color: #ffffff;
-    box-shadow: 0 2px 8px rgba(225, 10, 23, 0.3);
+    box-shadow: 0 2px 6px rgba(225, 10, 23, 0.3);
   }
 
   .menu-filters-bar.is-stuck .menu-tab-btn.active .category-icon-circle {
@@ -1671,13 +1799,95 @@ header.scrolled,
     font-weight: 700;
   }
 
-  /* Em telas muito estreitas (320px), reduz para 11px mantendo os 4 nomes legíveis em 1 linha */
+  /* Linha 2: seletor P/M/G/GG segmentado de 32px de altura, mostrando só "P", "M", "G", "GG"
+     (a legenda "X fatias" fica oculta só visualmente, de forma acessível),
+     selecionado em vermelho, não selecionado em branco com borda fina. */
+  .menu-filters-bar.is-stuck .size-bar {
+    display: flex;
+    margin: 6px 0 0 0;
+    padding: 0;
+    gap: 6px;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    border: none;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .menu-filters-bar.is-stuck .size-bar-btn {
+    position: relative;
+    flex: 1 1 0;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    border-radius: var(--raio-p, 6px);
+    background-color: var(--branco, #ffffff);
+    color: var(--grafite, #2B3537);
+    border: 1px solid rgba(43, 38, 35, 0.18);
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+  }
+
+  /* Alvo de toque estendido para 44px com pseudo-elemento, sem invadir a Linha 1 */
+  .menu-filters-bar.is-stuck .size-bar-btn::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    min-height: 41px;
+    pointer-events: auto;
+  }
+
+  .menu-filters-bar.is-stuck .size-bar-btn .size-bar-code {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    color: inherit;
+  }
+
+  /* Legenda "X fatias" oculta apenas visualmente de forma acessível */
+  .menu-filters-bar.is-stuck .size-bar-btn .size-bar-slices {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Tamanho selecionado em vermelho #E10A17 */
+  .menu-filters-bar.is-stuck .size-bar-btn.is-active {
+    background-color: var(--vermelho, #E10A17);
+    border-color: var(--vermelho, #E10A17);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(225, 10, 23, 0.25);
+    font-weight: 700;
+  }
+
+  .menu-filters-bar.is-stuck .size-bar-btn.is-active .size-bar-code {
+    color: #ffffff;
+  }
+
+  /* Em telas muito estreitas (<= 359px), ajustes mantendo os 4 nomes legíveis em 1 linha */
   @media (max-width: 359.98px) {
     .menu-filters-bar.is-stuck .menu-tabs {
       gap: 3px;
     }
     .menu-filters-bar.is-stuck .menu-tab-btn {
-      padding: 0 3px;
+      padding: 0 2px;
       gap: 2px;
     }
     .menu-filters-bar.is-stuck .tab-mobile-label {
@@ -1686,6 +1896,12 @@ header.scrolled,
     .menu-filters-bar.is-stuck .category-icon-circle svg {
       width: 16px;
       height: 16px;
+    }
+    .menu-filters-bar.is-stuck .size-bar {
+      gap: 4px;
+    }
+    .menu-filters-bar.is-stuck .size-bar-btn .size-bar-code {
+      font-size: 12px;
     }
   }
 
@@ -1703,12 +1919,12 @@ header.scrolled,
   }
 
   .menu-category-section {
-    scroll-margin-top: calc(var(--altura-header, 58px) + var(--altura-barra-compacta, 54px) + 8px);
+    scroll-margin-top: calc(var(--altura-header, 58px) + var(--altura-barra-compacta, 86px) + 8px);
   }
 
   .menu-category-header {
-    padding-bottom: 6px;
-    margin-bottom: 8px;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
     border-bottom: 1.5px solid rgba(43, 38, 35, 0.07);
   }
 
@@ -1719,7 +1935,8 @@ header.scrolled,
     color: var(--grafite);
     margin: 0;
     letter-spacing: -0.01em;
-    scroll-margin-top: calc(var(--altura-header, 58px) + var(--altura-barra-compacta, 54px) + 8px);
+    line-height: 1.2;
+    scroll-margin-top: calc(var(--altura-header, 52px) + var(--altura-barra-compacta, 86px) + 8px);
   }
 
   .menu-category-items {
@@ -1728,19 +1945,25 @@ header.scrolled,
     gap: 0.65rem;
   }
 
-  /* Padding-bottom no cardápio igual à altura da barra inferior + env(safe-area-inset-bottom) */
-  #cardapio {
-    padding-bottom: calc(var(--bottom-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + 24px) !important;
+  /* Padding-bottom no contêiner REAL da lista: altura da barra (68px) + safe-area + 24px */
+  #cardapio,
+  .menu-grid {
+    padding-bottom: calc(var(--altura-barra-inferior, 68px) + env(safe-area-inset-bottom, 0px) + 24px);
   }
 }
 
-/* Seletor Global de Tamanho (Somente Celular) */
+/* Seletor Global de Tamanho (Somente Celular: altura 44px, dentro da barra de filtros) */
 .size-bar {
   display: flex;
   gap: 0.35rem;
-  padding-inline: var(--esp-16, 16px);
-  padding-block: 0 16px;
-  margin: 0;
+  margin-inline: 0;
+  padding-inline: 0;
+  padding-top: 11px; /* 11px + 1px borda divisória = 12px de espaço */
+  padding-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* 6. Mais Pedidas em Carrossel Horizontal - oculto no celular (mantido no HTML) */
@@ -1748,7 +1971,7 @@ header.scrolled,
   display: none !important;
 }
 
-/* Etiqueta pequena do item no celular para itens em destaque */
+/* Etiqueta pequena do item no celular para itens com selo secundário (ex.: "Clássica") */
 .card-item--compact .card-title-row {
   display: flex;
   align-items: center;
@@ -1760,18 +1983,53 @@ header.scrolled,
 .card-item-selo {
   display: inline-flex;
   align-items: center;
-  padding: 1px 6px;
+  padding: 2px 7px;
   border-radius: 4px;
   font-family: var(--fonte-texto);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  line-height: 1.3;
-  color: #B8000E; /* Vermelho escuro com contraste WCAG AA > 4.5:1 */
-  background-color: var(--vermelho-claro, #FFEBEF);
-  border: 1px solid rgba(225, 10, 23, 0.22);
+  line-height: 1.2;
+  color: var(--vermelho-escuro); /* #B8000E: contraste WCAG AA 6.08:1 sobre #FFEBEF */
+  background-color: var(--vermelho-claro); /* #FFEBEF */
+  border: 1px solid rgba(184, 0, 14, 0.25);
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* Etiqueta de destaque que atravessa a borda superior do card (top: -10px, left: 12px), alinhada à foto */
+.card-badge-top {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  height: 23px;
+  padding: 0 8px;
+  background-color: var(--verde-escuro); /* #006B35 */
+  color: var(--branco); /* #FFFFFF */
+  font-family: var(--fonte-texto);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.card-badge-top svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.card-item--compact.card-item--destaque {
+  margin-top: 10px;
 }
 
 .mobile-section-header {
@@ -1951,7 +2209,7 @@ header.scrolled,
 
 .mobile-offer-old-price {
   font-size: 12px;
-  color: rgba(250, 248, 243, 0.5);
+  color: rgba(250, 248, 243, 0.8);
   text-decoration: line-through;
   margin-right: 6px;
 }
@@ -2853,7 +3111,7 @@ header.scrolled,
   .hero {
     min-height: auto !important;
     padding: 0 !important;
-    background: none !important;
+    background-color: var(--azul-marinho, #0B1020) !important;
   }
   .desktop-hero-grid {
     display: none !important;
@@ -3754,9 +4012,14 @@ header.scrolled,
 .size-bar {
   display: flex;
   gap: 0.35rem;
-  padding-inline: var(--esp-16, 16px);
-  padding-block: 0 16px;
-  margin: 0;
+  margin-inline: 0;
+  padding-inline: 0;
+  padding-top: 11px;
+  padding-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .size-bar[hidden] {
@@ -3765,31 +4028,56 @@ header.scrolled,
 
 .size-bar-btn {
   flex: 1 1 0;
+  height: 44px;
   min-height: 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: var(--raio-p);
-  border: 1.5px solid var(--borda);
+  border: 1px solid rgba(43, 38, 35, 0.2); /* Borda fina em grafite com 20% de opacidade */
   background-color: var(--branco);
   color: var(--grafite);
   cursor: pointer;
-  transition: all var(--transicao);
-  padding: 0.2rem 0.25rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+  padding: 0.25rem 0.2rem;
   text-align: center;
+  box-shadow: none;
 }
 
 .size-bar-btn:active {
   transform: scale(0.97);
+  background-color: var(--vermelho-escuro); /* #B8000E */
+  border-color: var(--vermelho-escuro);
+  color: var(--branco);
+}
+
+.size-bar-btn:active .size-bar-slices {
+  color: var(--branco);
+  opacity: 1;
 }
 
 .size-bar-btn.is-active {
-  background-color: var(--verde-escuro);
+  background-color: var(--vermelho); /* #E10A17 */
   color: var(--branco);
-  border-color: var(--verde-escuro);
-  box-shadow: 0 2px 8px rgba(0, 107, 53, 0.25);
+  border-color: var(--vermelho);
+  box-shadow: none; /* Sem sombra nem brilho */
   font-weight: 700;
+}
+
+.size-bar-btn.is-active .size-bar-slices {
+  color: var(--branco);
+  opacity: 1; /* Texto e rótulo de fatias em branco */
+}
+
+.size-bar-btn.is-active:active {
+  background-color: var(--vermelho-escuro); /* #B8000E */
+  border-color: var(--vermelho-escuro);
+}
+
+.size-bar-btn:focus-visible {
+  outline: 2px solid var(--vermelho);
+  outline-offset: 2px;
 }
 
 .size-bar-code {
@@ -3799,10 +4087,11 @@ header.scrolled,
 }
 
 .size-bar-slices {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   line-height: 1.1;
-  opacity: 0.85;
-  margin-top: 1px;
+  color: var(--texto-secundario);
+  opacity: 1;
+  margin-top: 2px;
 }
 
 /* Legenda de tamanhos oculta no celular (substituída pela barra interativa) */
@@ -3817,6 +4106,7 @@ header.scrolled,
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  overflow: visible;
 }
 
 .card-item {
@@ -3833,14 +4123,14 @@ header.scrolled,
   flex-direction: row;
   align-items: center;
   min-height: 88px;
-  max-height: 104px;
   padding: 0.5rem 0.65rem;
   gap: 0.65rem;
   position: relative;
+  overflow: visible;
 }
 
 .card-item--compact:active {
-  border-color: var(--verde-escuro);
+  border-color: var(--vermelho-escuro);
 }
 
 .card-item--compact .card-img-box {
@@ -3908,7 +4198,8 @@ header.scrolled,
 
 .card-item--compact .card-desc {
   font-size: 0.78rem;
-  color: var(--grafite-medio);
+  color: var(--texto-secundario);
+  opacity: 1;
   line-height: 1.25;
   margin-bottom: 0;
   display: -webkit-box;
@@ -3925,67 +4216,50 @@ header.scrolled,
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 6px;
   flex-shrink: 0;
   margin-left: auto;
 }
 
-.card-item--compact .price-box {
+.card-item--compact .compact-price-box {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .card-item--compact .price-value {
-  font-family: var(--fonte-titulo);
-  font-size: 1.05rem;
+  font-family: var(--fonte-texto);
+  font-size: 18px;
   font-weight: 700;
-  color: var(--vermelho);
-  line-height: 1;
+  color: var(--vermelho); /* #E10A17 */
+  line-height: 1.15;
   white-space: nowrap;
 }
 
-/* Botão de preço clicável para abrir a folha de tamanho */
-.price-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: var(--creme);
-  border: 1px dashed var(--borda);
-  border-radius: 6px;
-  padding: 0.2rem 0.35rem;
-  cursor: pointer;
-  transition: all var(--transicao);
-}
-
-.price-btn:active,
-.price-btn:hover {
-  border-color: var(--verde-escuro);
-  background-color: var(--verde-claro);
-}
-
-.price-size-tag {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--verde-escuro);
-  background-color: var(--verde-claro);
-  border-radius: 3px;
-  padding: 0.05rem 0.25rem;
-  line-height: 1.1;
-}
-
-.price-btn-caret {
-  stroke: var(--grafite-medio);
-  flex-shrink: 0;
+.card-item--compact .compact-price-size {
+  font-family: var(--fonte-texto);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--texto-secundario); /* #5C5552 */
+  line-height: 1.15;
+  white-space: nowrap;
+  margin-top: 2px;
 }
 
 /* ==========================================================================
-   Controles de Quantidade na Linha Compacta
+   Controles de Quantidade na Linha Compacta (Somente Celular < 768px)
    ========================================================================== */
 .item-control {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: var(--toque-minimo, 44px);
+  min-height: 48px;
+  position: relative;
 }
 
 .item-control .item-qty-btn,
@@ -3993,82 +4267,124 @@ header.scrolled,
   display: none;
 }
 
+/* Botão "+" inicial: 48x48px no mínimo, cantos de 14px, vermelho #E10A17 */
 .btn-add-item--compact {
-  width: var(--toque-minimo, 44px);
-  height: var(--toque-minimo, 44px);
-  min-width: var(--toque-minimo, 44px);
-  min-height: var(--toque-minimo, 44px);
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   padding: 0;
-  border-radius: 10px;
-  background-color: var(--vermelho);
+  border-radius: 14px;
+  background-color: var(--vermelho); /* #E10A17 */
   color: var(--branco);
   border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  position: relative;
   box-shadow: 0 2px 8px rgba(225, 10, 23, 0.3);
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 120ms ease, background-color 120ms ease;
+  will-change: transform;
 }
 
+/* Área de toque estendida a 56px com pseudo-elemento (48px + 4px cada lado) */
+.btn-add-item--compact::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  left: -4px;
+  right: -4px;
+}
+
+/* Feedback ao tocar: escala 0.94 por 120ms (só transform) */
 .btn-add-item--compact:active {
   transform: scale(0.94);
-  background-color: var(--vermelho-escuro);
+  background-color: var(--vermelho-escuro); /* #B8000E */
 }
 
 /* Estado com quantidade > 0: stepper com − [qtd] + */
 .item-control.has-qty {
+  height: 48px;
+  min-height: 48px;
   background-color: var(--creme);
   border: 1px solid var(--borda);
-  border-radius: 10px;
-  padding: 2px;
+  border-radius: 14px;
+  padding: 2px 4px;
   box-shadow: inset 0 1px 3px rgba(11, 16, 32, 0.05);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
 }
 
 .item-control.has-qty .item-qty-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 38px;
-  min-width: 36px;
-  min-height: 38px;
-  background: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
   border: none;
   color: var(--grafite);
-  font-size: 1.3rem;
-  font-weight: 700;
   cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.15s ease;
+  border-radius: 10px;
+  padding: 0;
+  transition: transform 120ms ease, background-color 120ms ease;
+  will-change: transform;
+}
+
+.item-control.has-qty .item-qty-btn svg {
+  stroke: var(--grafite);
+  stroke-width: 2.5px;
+  stroke-linecap: round;
 }
 
 .item-control.has-qty .item-qty-btn:active {
   background-color: var(--creme-escuro);
+  transform: scale(0.94);
 }
 
 .item-control.has-qty .item-qty {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  font-size: 0.95rem;
+  min-width: 28px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--grafite);
+  text-align: center;
+  user-select: none;
 }
 
 .item-control.has-qty .btn-add-item--compact {
-  width: 36px;
-  height: 38px;
-  min-width: 36px;
-  min-height: 38px;
-  border-radius: 6px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 10px;
   box-shadow: none;
 }
 
+.item-control.has-qty .btn-add-item--compact::after {
+  left: 0;
+  right: 0;
+}
+
 .item-control.has-qty .btn-add-item--compact svg {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-add-item--compact:active,
+  .item-control.has-qty .item-qty-btn:active {
+    transform: none;
+    transition: none;
+  }
 }
 
 /* Micro-animação de escala/pulsar */
@@ -4388,6 +4704,10 @@ dialog.size-sheet::backdrop {
     white-space: nowrap;
   }
 
+  .size-slices {
+    color: var(--texto-secundario);
+  }
+
   .size-sep {
     display: none;
   }
@@ -4643,15 +4963,18 @@ dialog.size-sheet::backdrop {
   inset: 0;
   background-color: rgba(11, 16, 32, 0.65);
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   z-index: 200;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--transicao);
+  visibility: hidden;
+  transition: opacity var(--transicao), visibility var(--transicao);
 }
 
 .cart-overlay.open {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 .cart-drawer {
@@ -4666,12 +4989,15 @@ dialog.size-sheet::backdrop {
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: -10px 0 30px rgba(11, 16, 32, 0.25);
+  visibility: hidden;
+  box-shadow: none;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.32s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .cart-drawer.open {
   transform: translateX(0);
+  visibility: visible;
+  box-shadow: -10px 0 30px rgba(11, 16, 32, 0.25);
 }
 
 .cart-header {
@@ -6026,8 +6352,16 @@ dialog.size-sheet::backdrop {
 }
 
 @media (max-width: 767.98px) {
+  html {
+    scroll-padding-bottom: calc(var(--altura-barra-inferior, 68px) + env(safe-area-inset-bottom, 0px) + 24px);
+  }
+
   .site-footer {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 2rem) !important;
+    padding-bottom: calc(var(--altura-barra-inferior, 68px) + env(safe-area-inset-bottom, 0px) + 24px) !important;
+  }
+
+  dialog.size-sheet:not([open]) {
+    display: none;
   }
 }
 

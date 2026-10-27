@@ -30,8 +30,8 @@ const BREAKPOINT_DESKTOP = 768;
    ======================================================================== */
 const BANNER_AUTOPLAY_MS = 0;     // Autoplay do carrossel de banner (0 = desligado por padrão; altere para milissegundos, ex: 5000)
 const BOTTOM_BAR_CONFIG = {
-  height: 64,                     // Altura da barra inferior em pixels (além da safe-area)
-  cartBtnSize: 58                 // Diâmetro do botão central elevado do carrinho
+  height: 68,                     // Altura da barra inferior em pixels (além da safe-area)
+  cartBtnSize: 46                 // Diâmetro do botão central elevado do carrinho
 };
 const TAMANHO_STORAGE_KEY = 'montese_pizzaria_size_v1'; // Tamanho global salvo à parte do carrinho
 const SEARCH_DEBOUNCE_MS = 150;   // Espera após a última tecla antes de filtrar a lista
@@ -40,7 +40,7 @@ const THUMB_LISTA_PX = 72;        // Lado da foto quadrada da linha compacta (va
 const VIBRACAO_MS = 10;           // Vibração curta ao adicionar/remover (quando o aparelho suporta)
 const VOLTAR_TOPO_TELAS = 1;      // Quantas alturas de tela rolar dentro do cardápio antes de mostrar o "↑"
 
-// Constantes da Etapa 2: simplificação da home no celular (< 768px)
+// Constantes da Etapa 2 e Ajuste Final Mobile (< 768px)
 const MOSTRAR_STATUS_NO_HEADER = true; // Pontinho de 8px (verde/cinza) ao lado do logo no header
 const OFERTA_DESTAQUE_MOBILE_ID = 'of-combo-familia'; // ID do Combo Família exibido como oferta única no celular
 
@@ -933,40 +933,74 @@ function buildThumbImageHTML(item) {
   return `<img src="${src}"${srcset} alt="${item.name}" width="${THUMB_LISTA_PX}" height="${THUMB_LISTA_PX}" loading="lazy" decoding="async">`;
 }
 
-// Preço da linha compacta. Pizza: o preço é um botão que abre a folha de tamanho do item. Bebida: só o valor.
+// Preço estático da linha compacta no celular: sem seta, sem fundo e sem cara de botão.
+// Pizzas mostram o valor e, abaixo em 12px, o tamanho lido do seletor global (ex.: "G · 8 fatias").
+// Bebidas mostram apenas o valor unitário, sem rótulo de tamanho.
 function buildCompactPriceHTML(item, size, price) {
-  const priceHTML = `<span class="price-value" id="price-${item.id}">${formatBRL(price)}</span>`;
-  if (!item.prices) return `<div class="price-box">${priceHTML}</div>`;
+  const priceFormatted = formatBRL(price);
+  const priceHTML = `<span class="price-value" id="price-${item.id}">${priceFormatted}</span>`;
 
-  const sizeTagHTML = state.itemSizeOverrides[item.id] ? `<span class="price-size-tag">${size}</span>` : '';
+  if (!item.prices) {
+    return `
+      <div class="compact-price-box">
+        ${priceHTML}
+      </div>`;
+  }
+
+  const infoTamanho = TAMANHOS_PIZZA.find(t => t.codigo === size);
+  const sizeDesc = infoTamanho ? `${size} · ${infoTamanho.fatias} fatias` : size;
+  const sizeHTML = `<span class="compact-price-size">${sizeDesc}</span>`;
+
   return `
-    <button type="button" class="price-btn" data-action="open-size-sheet" data-id="${item.id}" aria-haspopup="dialog" aria-label="Tamanho ${size}, ${formatBRL(price)}. Alterar o tamanho de ${item.name}">
-      ${sizeTagHTML}${priceHTML}
-      <svg class="price-btn-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>`;
+    <div class="compact-price-box">
+      ${priceHTML}
+      ${sizeHTML}
+    </div>`;
 }
 
-// Controle de quantidade da linha. O "+" é o mesmo botão em qualquer estado (mantém o foco); "−" e o contador
-// só aparecem quando há quantidade. O estado real vem do carrinho em syncMenuQuantityControls().
+// Controle de quantidade da linha. O "+" é o botão principal de 48x48px;
+// no contador "− 1 +", ambos os botões têm no mínimo 44x44px com ícones SVG inline.
 function buildItemControlHTML(item, size) {
   const label = buildItemLabel(item, size);
   return `
     <div class="item-control" data-cart-key="${buildCartKey(item, size)}">
-      <button type="button" class="item-qty-btn item-qty-minus" data-action="remove-one" data-id="${item.id}" aria-label="Remover uma unidade de ${label}">−</button>
+      <button type="button" class="item-qty-btn item-qty-minus" data-action="remove-one" data-id="${item.id}" aria-label="Remover uma unidade de ${label}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </button>
       <span class="item-qty">0</span>
       <button type="button" class="btn-add-item btn-add-item--compact" data-action="add-to-cart" data-id="${item.id}" aria-label="Adicionar ${label}">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
       </button>
     </div>`;
 }
 
-// Etiqueta pequena do item no celular para itens em destaque.
-// Se nenhum item tiver selo, usa "Sugestão da casa".
+// Etiqueta pequena do item no celular para itens com selo secundário (ex.: "Clássica").
 // CONFIRMAR COM A PIZZARIA QUAIS SÃO AS MAIS PEDIDAS ANTES DE USAR O SELO 'MAIS PEDIDA'
 function buildCompactSeloHTML(item) {
-  if (!item.destaque) return '';
-  const selo = item.selo || 'Sugestão da casa';
-  return `<span class="card-item-selo">${selo}</span>`;
+  if (!item.destaque || !item.selo) return '';
+  // Se for "Mais Pedida", o selo é renderizado atravessando a borda superior do card (fora do título)
+  if (item.selo === 'Mais Pedida') return '';
+  // Demais selos (ex.: "Clássica"): continuam como pílula discreta sob o nome, com contraste AA
+  return `<span class="card-item-selo">${item.selo}</span>`;
+}
+
+// Etiqueta de destaque que atravessa a borda superior do card (top: -10px, left: 12px), alinhada à foto.
+// Fundo #006B35, texto branco, peso 700, caixa alta, com ícone SVG de chama de 12px à esquerda.
+// CONFIRMAR COM A PIZZARIA QUAIS SÃO AS MAIS PEDIDAS ANTES DE USAR O SELO 'MAIS PEDIDA'
+function buildCompactTopBadgeHTML(item) {
+  if (!item.destaque || item.selo !== 'Mais Pedida') return '';
+  return `
+    <span class="card-badge-top" aria-label="Selo de destaque: ${item.selo}">
+      <svg class="badge-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+        <path d="M12 23c-4.97 0-9-4.03-9-9 0-3.86 2.54-7.23 4.88-9.44a1 1 0 0 1 1.62.62c.16 2.07.97 3.5 2.12 4.32C12.3 8.1 13.06 6.57 13.2 4.8a1 1 0 0 1 1.76-.56C17.42 7.15 21 11.23 21 14c0 4.97-4.03 9-9 9z"/>
+      </svg>
+      <span>${item.selo}</span>
+    </span>`;
 }
 
 // Um item do cardápio. Mesmo caminho para PC e celular: o PC gera o card grande de sempre;
@@ -979,8 +1013,11 @@ function renderMenuItem(item, compact) {
 
   if (compact) {
     const seloHTML = buildCompactSeloHTML(item);
+    const topBadgeHTML = buildCompactTopBadgeHTML(item);
+    const hasTopBadge = Boolean(topBadgeHTML);
     return `
-      <article class="card-item card-item--compact" data-item-id="${item.id}">
+      <article class="card-item card-item--compact ${hasTopBadge ? 'card-item--destaque' : ''}" data-item-id="${item.id}">
+        ${topBadgeHTML}
         <div class="card-img-box">
           ${buildThumbImageHTML(item)}
         </div>
@@ -1204,8 +1241,8 @@ function initCategoryScrollSpy() {
 
   const header = document.querySelector('.site-header') || document.querySelector('header');
   const headerHeight = header ? header.offsetHeight : 58;
-  const compactBarHeight = 54;
-  const topOffset = headerHeight + compactBarHeight + 8; // ~120px
+  const compactBarHeight = 86;
+  const topOffset = headerHeight + compactBarHeight + 8; // ~146px (header 52-58px + barra fixa 86px + respiro 8px)
 
   categoryScrollSpyObserver = new IntersectionObserver((entries) => {
     if (isProgrammaticScrolling) return;
@@ -1768,11 +1805,19 @@ function pulseElement(el) {
   el.addEventListener('animationend', () => el.classList.remove('is-pulse'), { once: true });
 }
 
+function pulseBottomCart() {
+  if (prefersReducedMotion()) return;
+  const cartCircle = document.querySelector('#mobileBottomCartBtn .mobile-nav-cart-circle');
+  if (cartCircle) {
+    pulseElement(cartCircle);
+  }
+}
+
 function playQuantityFeedback(buttonEl) {
   if (prefersReducedMotion()) return;
 
   pulseElement(buttonEl);
-  pulseElement($('mobileBottomCartBadge'));
+  pulseBottomCart();
   try {
     if (navigator.vibrate) navigator.vibrate(VIBRACAO_MS);
   } catch (error) {
@@ -1866,10 +1911,14 @@ function updateCartUI() {
   // Atualiza barra inferior no celular (< 768px)
   const mobileBadge = $('mobileBottomCartBadge') || $('mobileBottomCartCount');
   const mobileTotal = $('mobileBottomCartTotal');
+  const mobileCartBtn = $('mobileBottomCartBtn');
 
   if (state.cart.length === 0) {
     if (mobileBadge) mobileBadge.textContent = '0';
     if (mobileTotal) mobileTotal.textContent = 'R$ 0,00';
+    if (mobileCartBtn) {
+      mobileCartBtn.setAttribute('aria-label', 'Abrir carrinho, 0 itens, R$ 0,00');
+    }
     emptyState.style.display = 'block';
     contentWrapper.style.display = 'none';
     footer.style.display = 'none';
@@ -1887,6 +1936,11 @@ function updateCartUI() {
   if (mobileBadge) mobileBadge.textContent = totalCount;
   if (mobileTotal) {
     mobileTotal.textContent = formatBRL(summary.subtotal);
+  }
+  if (mobileCartBtn) {
+    const countText = `${totalCount} ${totalCount === 1 ? 'item' : 'itens'}`;
+    const totalText = mobileTotal ? mobileTotal.textContent : formatBRL(summary.subtotal);
+    mobileCartBtn.setAttribute('aria-label', `Abrir carrinho, ${countText}, ${totalText}`);
   }
 
   // Barra de progresso do frete grátis
@@ -2083,6 +2137,7 @@ function handleOfferClick(offerId) {
 
     saveCartToStorage();
     updateCartUI();
+    pulseBottomCart();
     showToast(`🍕 ${offer.titulo} adicionado ao pedido!`);
     openCartDrawer();
     return;
@@ -2609,7 +2664,7 @@ function renderMobileBanner() {
         <button type="button" class="btn btn-primary btn-banner-action" data-banner-action="scroll-cardapio" aria-label="Ver cardápio completo">Ver cardápio</button>
       </div>
       <div class="banner-slide-media" aria-hidden="true">
-        <img src="img/pizza-hero-mobile.webp" alt="Pizza artesanal da Montese" width="180" height="180" fetchpriority="high" class="banner-pizza-img">
+        <img src="img/pizza-hero-mobile.webp" alt="Pizza artesanal da Montese" width="110" height="110" fetchpriority="high" class="banner-pizza-img">
       </div>
     </div>
   `;
@@ -2728,16 +2783,18 @@ function renderMobileOfferBanner() {
   container.innerHTML = `
     <div class="tricolor-bar" aria-hidden="true"></div>
     <div class="mobile-combo-card-body">
-      <div class="mobile-combo-row-1">
-        <span class="mobile-combo-badge">${badgeLabel}</span>
-        <h3 class="mobile-combo-title">${combo.titulo}</h3>
-      </div>
-      <p class="mobile-combo-incluso">${inclusoTexto}</p>
-      <div class="mobile-combo-row-3">
+      <div class="mobile-combo-col-left">
+        <div class="mobile-combo-row-1">
+          <span class="mobile-combo-badge">${badgeLabel}</span>
+          <h3 class="mobile-combo-title">${combo.titulo}</h3>
+        </div>
+        <p class="mobile-combo-incluso">${inclusoTexto}</p>
         <div class="mobile-combo-prices">
           ${combo.precoDe ? `<span class="mobile-combo-price-old">De ${formatBRL(combo.precoDe)}</span>` : ''}
           <span class="mobile-combo-price-cur">Por ${formatBRL(combo.precoPor)}</span>
         </div>
+      </div>
+      <div class="mobile-combo-col-right">
         <button type="button" class="btn btn-combo-cta" data-action="select-offer" data-offer-id="${combo.id}" aria-label="Pedir ${combo.titulo}">
           Pedir combo
         </button>
